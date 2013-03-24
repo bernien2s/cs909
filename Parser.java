@@ -34,6 +34,12 @@ public class Parser {
 		//file path for reuters files
 		dirpath = "reuters21578/reut2-0";
 
+		//has this file been converted from SGML to our preferred XML yet? 
+		File f = new File(dirpath + args[0] + ".xml");
+		if(!f.exists()) { 
+			loadSGMFile(args[0]);
+		}
+		
 		//call file load
 		parseXMLFile(args[0]);
 	}

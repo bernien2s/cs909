@@ -50,10 +50,7 @@ public class Parser {
 		//interested in. This will eventually go to a tokenizer and is stored as
 		//in a document object.
 		
-		ReutersDocument document = new ReutersDocument();
-		
 		List<ReutersDocument> documentCollection = new ArrayList<ReutersDocument>();
-		
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		
@@ -64,9 +61,24 @@ public class Parser {
 			boolean dateline = false;
 			boolean body = false;
 			boolean endofdoc = false;
+			boolean endoffile = false;
 			String bodytext;
+			
+			List<ReutersDocument> documentCollection = new ArrayList<ReutersDocument>();
+			ReutersDocument document;
 		
 			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+ 
+				if (qName.equalsIgnoreCase("reuters")) {
+					//create new reuters document.
+				    document = new ReutersDocument();
+					document.setTopics(attributes.getValue("TOPICS"));
+					document.setLewis(attributes.getValue("LEWISSPLIT"));
+					document.setCgi(attributes.getValue("CGISPLIT"));
+					document.setoldid(attributes.getValue("OLDID"));
+					document.setnewid(attributes.getValue("NEWID"));
+					endofdoc = false;
+				}
  
 				if (qName.equalsIgnoreCase("title")) {
 					title = true;
@@ -86,11 +98,13 @@ public class Parser {
  
 				if (title) {
 					System.out.println("Document title : " + new String(ch, start, length));
+					document.setTitle(new String(ch, start, length));
 					title = false;
 				}
  
 				if (dateline) {
 					System.out.println("Document date : " + new String(ch, start, length));
+					document.setDateline(new String(ch, start, length));
 					dateline = false;
 				}
  
@@ -104,10 +118,12 @@ public class Parser {
  
 				if (qName.equalsIgnoreCase("reuters")) {
 					endofdoc = true;
+					documentCollection.add(document);
 				}
 				
 				if (qName.equalsIgnoreCase("body")) {
 					System.out.println("Document body: " + bodytext);
+					document.setText(bodytext);
 					body = false;
 					bodytext="";
 				}
@@ -121,6 +137,7 @@ public class Parser {
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(dirpath+filenum+".xml", handler);
 			System.out.println("(PARSER): Parsing complete");
+			System.out.println("(PARSER): Documents in collection, " + documentCollection.size());
 		
 		} catch (Exception e) {
 		

@@ -64,6 +64,7 @@ public class Parser {
 			boolean dateline = false;
 			boolean body = false;
 			boolean endofdoc = false;
+			String bodytext;
 		
 			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
  
@@ -94,8 +95,7 @@ public class Parser {
 				}
  
 				if (body) {
-					System.out.println("Document body : " + new String(ch, start, length));
-					body = false;
+					bodytext = bodytext + new String(ch, start, length);
 				}
  
 			}
@@ -104,6 +104,12 @@ public class Parser {
  
 				if (qName.equalsIgnoreCase("reuters")) {
 					endofdoc = true;
+				}
+				
+				if (qName.equalsIgnoreCase("body")) {
+					System.out.println("Document body: " + bodytext);
+					body = false;
+					bodytext="";
 				}
  
 			}

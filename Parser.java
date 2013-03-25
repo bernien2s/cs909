@@ -26,6 +26,7 @@ public class Parser {
 	
 	private static String dirpath;
 	private static int sgmCount;
+	private static List<ReutersDocument> completedCollection;
 	
 	public static void main (String[] args) {
 		
@@ -54,90 +55,22 @@ public class Parser {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		
-		//SAX Handler callback functions.
-		DefaultHandler handler = new DefaultHandler() {
-		
-			boolean title = false;
-			boolean dateline = false;
-			boolean body = false;
-			boolean endofdoc = false;
-			boolean endoffile = false;
-			String bodytext;
-			
-			List<ReutersDocument> documentCollection = new ArrayList<ReutersDocument>();
-			ReutersDocument document;
-		
-			public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
- 
-				if (qName.equalsIgnoreCase("reuters")) {
-					//create new reuters document.
-				    document = new ReutersDocument();
-					document.setTopics(attributes.getValue("TOPICS"));
-					document.setLewis(attributes.getValue("LEWISSPLIT"));
-					document.setCgi(attributes.getValue("CGISPLIT"));
-					document.setoldid(attributes.getValue("OLDID"));
-					document.setnewid(attributes.getValue("NEWID"));
-					endofdoc = false;
-				}
- 
-				if (qName.equalsIgnoreCase("title")) {
-					title = true;
-				}
- 
-				if (qName.equalsIgnoreCase("dateline")) {
-					dateline = true;
-				}
- 
-				if (qName.equalsIgnoreCase("body")) {
-					body = true;
-				}
- 
-			}	
-			
-			public void characters(char ch[], int start, int length) throws SAXException {
- 
-				if (title) {
-					System.out.println("Document title : " + new String(ch, start, length));
-					document.setTitle(new String(ch, start, length));
-					title = false;
-				}
- 
-				if (dateline) {
-					System.out.println("Document date : " + new String(ch, start, length));
-					document.setDateline(new String(ch, start, length));
-					dateline = false;
-				}
- 
-				if (body) {
-					bodytext = bodytext + new String(ch, start, length);
-				}
- 
-			}
-			
-			public void endElement(String uri, String localName, String qName) throws SAXException {
- 
-				if (qName.equalsIgnoreCase("reuters")) {
-					endofdoc = true;
-					documentCollection.add(document);
-				}
-				
-				if (qName.equalsIgnoreCase("body")) {
-					System.out.println("Document body: " + bodytext);
-					document.setText(bodytext);
-					body = false;
-					bodytext="";
-				}
- 
-			}
-		
-		};
+		//SAX Handler callback functions. This needs to be changed into a non anon class.
+		SAXDefaultHandler handler = new SAXDefaultHandler(documentCollection);
 	
 		try {
 	
 			SAXParser parser = factory.newSAXParser();
 			parser.parse(dirpath+filenum+".xml", handler);
+			documentCollection = handler.getCompletedCollection();
+			System.out.println("(ReutersDocument): Last documented to be added");
+			System.out.println("(ReutersDocument): PROPERTIES:" + documentCollection.remove(documentCollection.size()-1).getTopics() + "/" + documentCollection.remove(documentCollection.size()-1).getLewis() + "/" + documentCollection.remove(documentCollection.size()-1).getCgi() + "/" + documentCollection.remove(documentCollection.size()-1).getoldid() + "/" + documentCollection.remove(documentCollection.size()-1).getnewid());
+			System.out.println("(ReutersDocument): TITLE: " + documentCollection.remove(documentCollection.size()-1).getTitle());
+			System.out.println("(ReutersDocument): DATELINE: " + documentCollection.remove(documentCollection.size()-1).getDateline());
+			System.out.println("(ReutersDocument): BODY: " + documentCollection.remove(documentCollection.size()-1).getText());
 			System.out.println("(PARSER): Parsing complete");
 			System.out.println("(PARSER): Documents in collection, " + documentCollection.size());
+			completedCollection = documentCollection;
 		
 		} catch (Exception e) {
 		
@@ -197,6 +130,100 @@ public class Parser {
 			System.out.println(e.toString());
 		
 		}
+	
+	}
+	
+	public static List<ReutersDocument> getCompletedCollection() {
+	
+		return completedCollection;
+	
+	}
+
+}
+
+class SAXDefaultHandler extends DefaultHandler {
+
+	private List<ReutersDocument> collection;
+	private boolean title = false;
+	private boolean dateline = false;
+	private boolean body = false;
+	private boolean endofdoc = false;
+	private boolean endoffile = false;
+	private String bodytext;
+			
+	public ReutersDocument document;
+
+	public SAXDefaultHandler(List<ReutersDocument> collection) {
+	
+		this.collection = collection;
+	
+	}
+	
+	public SAXDefaultHandler() {}
+	
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+
+		if (qName.equalsIgnoreCase("reuters")) {
+			//create new reuters document.
+			document = new ReutersDocument();
+			document.setTopics(attributes.getValue("TOPICS"));
+			document.setLewis(attributes.getValue("LEWISSPLIT"));
+			document.setCgi(attributes.getValue("CGISPLIT"));
+			document.setoldid(attributes.getValue("OLDID"));
+			document.setnewid(attributes.getValue("NEWID"));
+			endofdoc = false;
+		}
+
+		if (qName.equalsIgnoreCase("title")) {
+			title = true;
+		}
+
+		if (qName.equalsIgnoreCase("dateline")) {
+			dateline = true;
+		}
+
+		if (qName.equalsIgnoreCase("body")) {
+			body = true;
+		}
+
+	}	
+
+	public void characters(char ch[], int start, int length) throws SAXException {
+
+		if (title) {
+			document.setTitle(new String(ch, start, length));
+			title = false;
+		}
+
+		if (dateline) {
+			document.setDateline(new String(ch, start, length));
+			dateline = false;
+		}
+
+		if (body) {
+			bodytext = bodytext + new String(ch, start, length);
+		}
+
+	}
+
+	public void endElement(String uri, String localName, String qName) throws SAXException {
+
+		if (qName.equalsIgnoreCase("reuters")) {
+			endofdoc = true;
+			collection.add(document);
+		}
+		
+		if (qName.equalsIgnoreCase("body")) {
+			document.setText(bodytext);
+			body = false;
+			bodytext="";
+		}
+
+	}
+	
+	public List<ReutersDocument> getCompletedCollection() {
+	
+		return collection;
 	
 	}
 

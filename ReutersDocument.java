@@ -12,6 +12,10 @@ public class ReutersDocument {
 	private String TITLE;
 	private String DATELINE;
 	private String TEXT;
+	private String[] TITLETOKENS;
+	private String[] BODYTOKENS;
+	
+	//Constructor for initial parsing.
 
 	public ReutersDocument (String topics, String lewissplit, String cgisplit, String oldid, String newid, String title, String dateline, String text) {
 
@@ -26,7 +30,28 @@ public class ReutersDocument {
 
 	}
 	
+	//Constructor for tokenized document.
+	
+	public ReutersDocument (String lewissplit, String cgisplit, String[] titleTokens, String[] bodyTokens) {
+		
+		this.TITLETOKENS = titleTokens;
+		this.BODYTOKENS = bodyTokens;
+	
+	}
+	
 	public ReutersDocument() {}
+	
+	public void settitleTokens(String[] titleTokens) {
+	
+		TITLETOKENS = titleTokens;
+	
+	}
+	
+	public void setbodyTokens(String[] bodyTokens) {
+	
+		BODYTOKENS = bodyTokens;
+	
+	}
 	
 	public void setTopics(String topics) {
 	
@@ -121,6 +146,18 @@ public class ReutersDocument {
 	public String getText() {
 	
 		return TEXT;
+	
+	}
+	
+	public String[] gettitleTokens() {
+	
+		return TITLETOKENS;
+	
+	}
+	
+	public String[] getbodyTokens() {
+	
+		return BODYTOKENS;
 	
 	}
 }

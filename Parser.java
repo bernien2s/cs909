@@ -28,6 +28,8 @@ public class Parser {
 	private static int sgmCount;
 	private static List<ReutersDocument> completedCollection;
 	
+	public Parser () {}
+	
 	public static void main (String[] args) {
 		
 		//this main will eventually be abstracted out to a handler class
@@ -43,6 +45,10 @@ public class Parser {
 		
 		//call file load
 		parseXMLFile(args[0]);
+		
+		//pass to tokenizer for now
+		Tokenizer tk = new Tokenizer(completedCollection);
+		tk.tokenizeDocumentSet();
 	}
 	
 	public static void parseXMLFile(String filenum) {

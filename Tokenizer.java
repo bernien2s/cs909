@@ -94,9 +94,9 @@ public class Tokenizer {
 					if(tokenizerObject.ttype == StreamTokenizer.TT_WORD) {
 					
 						//normalize case of words.
-						if(!isStopWord(tokenizerObject.sval.toLowerCase())) {
-							System.out.println(tokenizerObject.sval.toLowerCase());						
-							tokenList.add(tokenizerObject.sval.toLowerCase());
+						if(!isStopWord(tokenizerObject.sval.toLowerCase())) {		
+							//pass to stem words method.
+							tokenList.add(stemWord(tokenizerObject.sval.toLowerCase()));
 						}
 						
 					} else if(tokenizerObject.ttype == StreamTokenizer.TT_EOL) {
@@ -115,6 +115,8 @@ public class Tokenizer {
 			document.setbodyTokens(tokenArray);
 		
 		}
+		
+		//stem documentset
 	
 		return documentSet;
 		
@@ -130,6 +132,20 @@ public class Tokenizer {
 		} else {
 			return false;
 		}
+		
+	}
+	
+	public String stemWord(String word) {
+	
+		String stemmed = "";
+		Stemmer stemmer = new Stemmer();
+		stemmer.add(word.toCharArray(),word.toCharArray().length);
+		stemmer.stem();
+		stemmed = stemmer.toString();
+		
+		System.out.println(stemmed);
+		
+		return stemmed;
 		
 	}
 

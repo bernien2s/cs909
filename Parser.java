@@ -48,7 +48,13 @@ public class Parser {
 		
 		//pass to tokenizer for now
 		Tokenizer tk = new Tokenizer(completedCollection);
-		tk.tokenizeDocumentSet();
+		completedCollection = tk.tokenizeDocumentSet();
+		
+		//pass to lemmatizer for now (more accurate classification)
+		//better than stemming but more lookup involved (http://en.wikipedia.org/wiki/Lemmatisation)
+		//uses lucene.
+		
+
 	}
 	
 	public static void parseXMLFile(String filenum) {

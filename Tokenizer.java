@@ -12,6 +12,12 @@ import java.io.FileReader;
 import java.io.File;
 import java.io.FileWriter;
 
+/*Weka imports*/
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
+
 public class Tokenizer {
 
 	/*Suggested structure:
@@ -118,6 +124,8 @@ public class Tokenizer {
 		
 		//stem documentset
 	
+		outputCollectionToArff(documentSet);
+	
 		return documentSet;
 		
 	}
@@ -127,7 +135,6 @@ public class Tokenizer {
 		//checks existence in stopwords hashmap.
 		
 		if (stopSet.containsKey(word)) {
-			System.out.println("Removed stop word: " + word); 
 			return true;
 		} else {
 			return false;
@@ -143,10 +150,49 @@ public class Tokenizer {
 		stemmer.stem();
 		stemmed = stemmer.toString();
 		
-		System.out.println(stemmed);
-		
 		return stemmed;
 		
+	}
+	
+	public void outputCollectionToArff(List<ReutersDocument> docSet) {
+	
+		//Create arff file from XML file for StringToWordVector representation.
+		//This is appropriate for Vector Space and Topic Based Vector Space Model.
+		//Convert to CSV and then to ARFF.
+		
+		File file = new File("reuters21578/arff/reut2-001.csv");
+	
+		try {
+ 
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+	 
+			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			
+			for (ReutersDocument doc : docSet) {
+			
+				String fileString = "";
+			
+				for (int i = 0; i < doc.getbodyTokens().length; i++) {
+				
+					fileString = fileString + (doc.getbodyTokens()[i]+",");
+				
+				}
+	
+				fileString = fileString + "\n";
+				fw.append(fileString);
+			
+			}
+			
+			fw.close();
+		
+		} catch (Exception e) {
+		
+			System.out.println(e.toString());
+		
+		}
 	}
 
 }

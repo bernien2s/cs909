@@ -4,6 +4,7 @@ import java.util.*;
 
 public class ReutersDocument {
 
+	private int docid;
 	private String TOPICS;
 	private String LEWISSPLIT;
 	private String CGISPLIT;
@@ -14,6 +15,7 @@ public class ReutersDocument {
 	private String TEXT;
 	private String[] TITLETOKENS;
 	private String[] BODYTOKENS;
+	private Boolean TESTTRAINING;
 	
 	//Constructor for initial parsing.
 

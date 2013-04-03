@@ -46,11 +46,16 @@ public class Parser {
 		//call file load
 		parseXMLFile(args[0]);
 		
+		System.out.println("(Parser): Parsing complete.");
+		
 		//pass to tokenizer for now
 		Tokenizer tk = new Tokenizer(completedCollection);
 		completedCollection = tk.tokenizeDocumentSet();
 		
-		//pass to lemmatizer for now (more accurate classification)
+		System.out.println("(Tokenizer): Tokenization complete, " + completedCollection.size() + "documents.");
+	
+		
+		//pass to lemmatizer? (more accurate classification)
 		//better than stemming but more lookup involved (http://en.wikipedia.org/wiki/Lemmatisation)
 		//uses lucene.
 		

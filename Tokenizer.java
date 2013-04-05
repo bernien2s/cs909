@@ -13,10 +13,10 @@ import java.io.File;
 import java.io.FileWriter;
 
 /*Weka imports*/
-import weka.core.Attribute;
+/*import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
-import weka.core.Instances;
+import weka.core.Instances;*/
 
 public class Tokenizer {
 

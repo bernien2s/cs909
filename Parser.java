@@ -184,7 +184,6 @@ class SAXDefaultHandler extends DefaultHandler {
 		if (qName.equalsIgnoreCase("reuters")) {
 			//create new reuters document.
 			document = new ReutersDocument();
-			document.setTopics(attributes.getValue("TOPICS"));
 			document.setLewis(attributes.getValue("LEWISSPLIT"));
 			document.setCgi(attributes.getValue("CGISPLIT"));
 			document.setoldid(attributes.getValue("OLDID"));

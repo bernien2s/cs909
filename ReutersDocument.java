@@ -105,7 +105,7 @@ public class ReutersDocument {
 	
 	public String getTopics() {
 	
-		return TEXT;
+		return TOPICS;
 	
 	}
 	

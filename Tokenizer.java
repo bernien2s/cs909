@@ -214,9 +214,17 @@ public class Tokenizer {
 				
 				}
 				
-				//write out topics for class (null if n/a)
-				
 				writer.write("'");
+				
+				//write out topics for class (null if n/a)
+				writer.write(",");
+				
+				if(doc.getTopics()!=null) {
+					writer.write(doc.getTopics());
+				} else {
+					writer.write("null");
+				}
+				
 				writer.newLine();
 				writer.flush();
 			

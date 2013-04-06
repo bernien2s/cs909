@@ -163,6 +163,7 @@ class SAXDefaultHandler extends DefaultHandler {
 	private List<ReutersDocument> collection;
 	private boolean title = false;
 	private boolean dateline = false;
+	private boolean topics = false;
 	private boolean body = false;
 	private boolean endofdoc = false;
 	private boolean endoffile = false;
@@ -202,6 +203,10 @@ class SAXDefaultHandler extends DefaultHandler {
 		if (qName.equalsIgnoreCase("body")) {
 			body = true;
 		}
+		
+		if (qName.equalsIgnoreCase("topics")) {
+			topics = true;
+		}
 
 	}	
 
@@ -215,6 +220,11 @@ class SAXDefaultHandler extends DefaultHandler {
 		if (dateline) {
 			document.setDateline(new String(ch, start, length));
 			dateline = false;
+		}
+		
+		if (topics) {
+			document.setTopics(new String(ch, start, length));
+			topics = false;
 		}
 
 		if (body) {
@@ -236,6 +246,10 @@ class SAXDefaultHandler extends DefaultHandler {
 			bodytext="";
 		}
 
+		if (qName.equalsIgnoreCase("topics")) {
+			topics = false;
+		}
+		
 	}
 	
 	public List<ReutersDocument> getCompletedCollection() {

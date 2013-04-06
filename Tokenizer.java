@@ -13,10 +13,10 @@ import java.io.File;
 import java.io.FileWriter;
 
 /*Weka imports*/
-/*import weka.core.Attribute;
+import weka.core.Attribute;
 import weka.core.FastVector;
 import weka.core.Instance;
-import weka.core.Instances;*/
+import weka.core.Instances;
 
 public class Tokenizer {
 
@@ -116,9 +116,13 @@ public class Tokenizer {
 				e.toString();
 			
 			}
-		
+			
+			//set body tokens
 			tokenArray = (String[]) tokenList.toArray(new String[0]);
 			document.setbodyTokens(tokenArray);
+			
+			//dispose contents of token list
+			tokenList.clear();
 		
 		}
 		
@@ -160,7 +164,10 @@ public class Tokenizer {
 		//This is appropriate for Vector Space and Topic Based Vector Space Model.
 		//Convert to CSV and then to ARFF.
 		
-		File file = new File("reuters21578/arff/reut2-001.csv");
+		File file = new File("reuters21578/arff/reut2-test.arff");
+		File topicsfile = new File("reuters21578/all-topics-strings.lc.txt");
+		String tmpLine = "";
+		String topicString = "";
 	
 		try {
  
@@ -169,24 +176,53 @@ public class Tokenizer {
 				file.createNewFile();
 			}
 	 
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
+	 		//create writer object for file
+			BufferedWriter writer = new BufferedWriter(new FileWriter(file.getAbsoluteFile()));
+			BufferedReader reader = new BufferedReader(new FileReader(topicsfile));
 			
-			for (ReutersDocument doc : docSet) {
-			
-				String fileString = "";
-			
-				for (int i = 0; i < doc.getbodyTokens().length; i++) {
+			//read and store topics list
+			while((tmpLine = reader.readLine())!=null) {
 				
-					fileString = fileString + (doc.getbodyTokens()[i]+",");
-				
+				if (topicString=="") {
+					topicString = null;
+				} else {
+					topicString = topicString + "," + tmpLine;
 				}
-	
-				fileString = fileString + "\n";
-				fw.append(fileString);
 			
 			}
 			
-			fw.close();
+			reader.close();
+			
+			//write arff headers to File
+			writer.write("@RELATION 'documents'\n\n");
+			writer.write("@ATTRIBUTE words string\n");
+			writer.write("@ATTRIBUTE class {"+topicString+"}\n\n");
+			
+			writer.write("@DATA\n");
+			
+			for (ReutersDocument doc : docSet) {
+
+				writer.write("'");
+	
+				//write out string
+	
+				for (int i = 0; i < doc.getbodyTokens().length; i++) {
+				
+					if (doc.getbodyTokens()[i]!=null) {
+						writer.write(doc.getbodyTokens()[i].replace("\n","") + ":");
+					}
+				
+				}
+				
+				//write out topics for class (null if n/a)
+				
+				writer.write("'");
+				writer.newLine();
+				writer.flush();
+			
+			}
+			
+			writer.close();
 		
 		} catch (Exception e) {
 		

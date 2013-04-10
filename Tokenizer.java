@@ -214,9 +214,6 @@ public class Tokenizer {
 				
 				}
 				
-
-				//System.out.println(doc.getTopicList());
-				
 				//write out topics for class (null if n/a)				
 				writer.write("'");
 				
@@ -224,7 +221,12 @@ public class Tokenizer {
 				writer.write("," + doc.getLewis().toLowerCase());
 				
 				//write out the class 
-				writer.write("," + "?");
+				if (!(null == doc.getTopicList())) {
+					writer.write(",'" + doc.getTopicList() + "'");
+				}
+				else {
+					writer.write("," + "?");
+				}
 				
 				writer.newLine();
 				writer.flush();

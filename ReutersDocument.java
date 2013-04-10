@@ -4,12 +4,15 @@ import java.util.*;
 
 public class ReutersDocument {
 
+	//attribute values
 	private int docid;
 	private String TOPICS;
 	private String LEWISSPLIT;
 	private String CGISPLIT;
 	private String OLDID;
 	private String NEWID;
+	
+	//element values
 	private String TITLE;
 	private String DATELINE;
 	private String TEXT;

@@ -196,6 +196,7 @@ public class Tokenizer {
 			//write arff headers to File
 			writer.write("@RELATION 'documents'\n\n");
 			writer.write("@ATTRIBUTE words string\n");
+			writer.write("@ATTRIBUTE lewissplit {train,test} \n");		//this is needed to split training+test data 
 			writer.write("@ATTRIBUTE class {"+topicString+"}\n\n");
 			
 			writer.write("@DATA\n");
@@ -204,8 +205,7 @@ public class Tokenizer {
 
 				writer.write("'");
 	
-				//write out string
-	
+				//write out string	
 				for (int i = 0; i < doc.getbodyTokens().length; i++) {
 				
 					if (doc.getbodyTokens()[i]!=null) {
@@ -214,9 +214,12 @@ public class Tokenizer {
 				
 				}
 				
-				//write out topics for class (null if n/a)
-				
+				//write out topics for class (null if n/a)				
 				writer.write("'");
+				
+				//write out the lewissplit attribute
+				writer.write("," + doc.getLewis());
+				
 				writer.newLine();
 				writer.flush();
 			

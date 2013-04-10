@@ -182,6 +182,7 @@ class SAXDefaultHandler extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 		if (qName.equalsIgnoreCase("reuters")) {
+		
 			//create new reuters document.
 			document = new ReutersDocument();
 			document.setTopics(attributes.getValue("TOPICS"));
@@ -223,7 +224,7 @@ class SAXDefaultHandler extends DefaultHandler {
 		}
 		
 		if (topics) {
-			document.setTopics(new String(ch, start, length));
+			document.setTopicList(new String(ch, start, length));
 			topics = false;
 		}
 

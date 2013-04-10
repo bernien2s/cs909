@@ -20,8 +20,10 @@ public class ReutersDocument {
 	private String[] BODYTOKENS;
 	private Boolean TESTTRAINING;
 	
+	//these are also elements, but have been separated as they are an "aftermarket addition"
+	private String TOPICLIST;
+	
 	//Constructor for initial parsing.
-
 	public ReutersDocument (String topics, String lewissplit, String cgisplit, String oldid, String newid, String title, String dateline, String text) {
 
 		this.TOPICS = topics;
@@ -164,6 +166,15 @@ public class ReutersDocument {
 	
 		return BODYTOKENS;
 	
+	}
+	
+	//aftermarket additions (may need to be deleted)
+	public void setTopicList(String topic) {
+		TOPICLIST = topic; 
+	}
+	
+	public String getTopicList() {
+		return TOPICLIST; 
 	}
 }
 

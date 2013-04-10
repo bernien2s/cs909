@@ -30,8 +30,8 @@ public class Tokenizer {
 	*/
 
 	private List<ReutersDocument> documentSet;
-	private List<ReutersDocument> testSet;
-	private List<ReutersDocument> trainingSet;
+	//private List<ReutersDocument> testSet;
+	//private List<ReutersDocument> trainingSet;
 	private StreamTokenizer	tokenizerObject;
 	private File stopwords;
 	private Hashtable<String, String> stopSet;
@@ -202,7 +202,7 @@ public class Tokenizer {
 			writer.write("@DATA\n");
 			
 			for (ReutersDocument doc : docSet) {
-
+				
 				writer.write("'");
 	
 				//write out string	
@@ -214,11 +214,17 @@ public class Tokenizer {
 				
 				}
 				
+
+				//System.out.println(doc.getTopicList());
+				
 				//write out topics for class (null if n/a)				
 				writer.write("'");
 				
 				//write out the lewissplit attribute
-				writer.write("," + doc.getLewis());
+				writer.write("," + doc.getLewis().toLowerCase());
+				
+				//write out the class 
+				writer.write("," + "?");
 				
 				writer.newLine();
 				writer.flush();

@@ -178,11 +178,17 @@ public class ReutersDocument {
 		int i = 0;
 		
 		for (String topic : TOPICLIST) {
-			if (i != 0) {
+			/*if (i != 0) {
 				ret = ret + ":";
 			}
 			
 			ret = ret + topic; 
+			*/
+			
+			//temporarily only use the first topic
+			if(i==0) {
+				ret = topic; 
+			}
 			
 			i++;
 		}

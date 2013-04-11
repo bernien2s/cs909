@@ -54,6 +54,9 @@ public class Parser {
 		
 		System.out.println("(Tokenizer): Tokenization complete, " + completedCollection.size() + "documents.");
 	
+		//PLSA plsaModel = new PLSA();	
+		
+		//plsaModel.performLSA(completedCollection);
 		
 		//pass to lemmatizer? (more accurate classification)
 		//better than stemming but more lookup involved (http://en.wikipedia.org/wiki/Lemmatisation)

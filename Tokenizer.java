@@ -30,12 +30,15 @@ public class Tokenizer {
 	*/
 
 	private List<ReutersDocument> documentSet;
-	private List<ReutersDocument> testSet;
-	private List<ReutersDocument> trainingSet;
+	//private List<ReutersDocument> testSet;
+	//private List<ReutersDocument> trainingSet;
 	private StreamTokenizer	tokenizerObject;
 	private File stopwords;
 	private Hashtable<String, String> stopSet;
 	private BufferedReader bReader;
+	
+	//two different modes of operation depending on which classification method is used
+	private boolean multiTopic = false; 
 	
 	public Tokenizer(List<ReutersDocument> documentSet) {
 	
@@ -43,7 +46,7 @@ public class Tokenizer {
 		stopSet = new Hashtable<String,String>();
 	
 	}
-	
+		
 	public List<ReutersDocument> tokenizeDocumentSet() {
 	
 		//variables for temporary storage of tokenized info.
@@ -168,6 +171,8 @@ public class Tokenizer {
 		File topicsfile = new File("reuters21578/all-topics-strings.lc.txt");
 		String tmpLine = "";
 		String topicString = "";
+		
+		List<String> topicList = new ArrayList<String>();
 	
 		try {
  
@@ -187,6 +192,7 @@ public class Tokenizer {
 					topicString = null;
 				} else {
 					topicString = topicString + "," + tmpLine;
+					topicList.add(tmpLine);
 				}
 			
 			}
@@ -196,16 +202,27 @@ public class Tokenizer {
 			//write arff headers to File
 			writer.write("@RELATION 'documents'\n\n");
 			writer.write("@ATTRIBUTE words string\n");
-			writer.write("@ATTRIBUTE class {"+topicString+"}\n\n");
+			writer.write("@ATTRIBUTE lewissplit {train,test} \n");		//this is needed to split training+test data 
+			
+			//if we are using multiple topics, write each topic out 
+			//as a boolean attribute otherwise just use the first attribute 
+			if (!multiTopic) {
+				writer.write("@ATTRIBUTE class-att {"+topicString+"}\n\n");
+			} else {
+				//iterate over each and every topic, spaffing to the arff file
+				for (String topic : topicList) {
+					writer.write("@ATTRIBUTE " + topic.replaceAll("\\s","") + "-class" + " {false, true} \n");
+				}
+				writer.write("\n");
+			}
 			
 			writer.write("@DATA\n");
 			
 			for (ReutersDocument doc : docSet) {
-
+				
 				writer.write("'");
 	
-				//write out string
-	
+				//write out string	
 				for (int i = 0; i < doc.getbodyTokens().length; i++) {
 				
 					if (doc.getbodyTokens()[i]!=null) {
@@ -214,9 +231,51 @@ public class Tokenizer {
 				
 				}
 				
-				//write out topics for class (null if n/a)
-				
+				//write out topics for class (null if n/a)				
 				writer.write("'");
+				
+				//write out the lewissplit attribute
+				writer.write("," + doc.getLewis().toLowerCase());
+				
+				//if it's a multitopic we will spam with boolean vals, otherwise now 
+				if (!multiTopic) {
+				
+					//write out a single class (the first one available)
+					if (!(null == doc.getTopicList())) {
+						writer.write(",'" + doc.getTopicList() + "'");
+					}
+					else {
+						writer.write("," + "?");
+					}
+				} else {
+					writer.write(",");
+					//for every possible class try to match with the topics in the document
+					if (!(null == doc.getTopicList())) {
+						int j = 0; 
+						for (String topic : topicList) {
+							if (j!=0) {
+								writer.write(",");
+							}
+							if (doc.getTopicArrayList().contains(topic)) {
+								writer.write("true");
+							} else {
+								writer.write("false"); 
+							}
+							j++;
+						}
+					} else {
+						int j = 0;
+						for (String topic : topicList) {
+							if (j!=0) {
+								writer.write(",");
+							}
+						
+							writer.write("false");
+							j++;
+						}
+					}
+				}
+				
 				writer.newLine();
 				writer.flush();
 			
@@ -229,6 +288,10 @@ public class Tokenizer {
 			System.out.println(e.toString());
 		
 		}
+	}
+	
+	public void setMultiTopic(boolean mt) {
+		multiTopic = mt; 
 	}
 
 }

@@ -55,9 +55,8 @@ public class Parser {
 		System.out.println("(Tokenizer): Tokenization complete, " + completedCollection.size() + "documents.");
 	
 		//PLSA plsaModel = new PLSA();	
-		
 		//plsaModel.performLSA(completedCollection);
-		
+	
 		//pass to lemmatizer? (more accurate classification)
 		//better than stemming but more lookup involved (http://en.wikipedia.org/wiki/Lemmatisation)
 		//uses lucene.
@@ -165,6 +164,8 @@ class SAXDefaultHandler extends DefaultHandler {
 
 	private List<ReutersDocument> collection;
 	private boolean title = false;
+	private boolean d = false; 
+	private boolean places = false; 
 	private boolean dateline = false;
 	private boolean topics = false;
 	private boolean body = false;
@@ -185,6 +186,7 @@ class SAXDefaultHandler extends DefaultHandler {
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
 
 		if (qName.equalsIgnoreCase("reuters")) {
+		
 			//create new reuters document.
 			document = new ReutersDocument();
 			document.setTopics(attributes.getValue("TOPICS"));
@@ -210,6 +212,17 @@ class SAXDefaultHandler extends DefaultHandler {
 		if (qName.equalsIgnoreCase("topics")) {
 			topics = true;
 		}
+		
+		//"d" contains the names of topics
+		if (qName.equalsIgnoreCase("d")) {
+			d = true;
+		}
+		
+		//we do not care about places, but we are using this to prevent places from occurring in the topic list
+		if (qName.equalsIgnoreCase("places")) {
+			topics = false; 
+			places = true;
+		}
 
 	}	
 
@@ -225,9 +238,21 @@ class SAXDefaultHandler extends DefaultHandler {
 			dateline = false;
 		}
 		
+		//we don't actually do anything here... this method can be removed
 		if (topics) {
-			document.setTopics(new String(ch, start, length));
-			topics = false;
+			//document.setTopicList(new String(ch, start, length));
+			//topics = false;
+		}
+		
+		//dispose of places
+		if (places) {
+			places = false;
+		}
+		
+		//"d" contains the names of topics 
+		if (d && topics) {
+			document.addTopic(new String(ch, start, length));
+			d = false; 
 		}
 
 		if (body) {

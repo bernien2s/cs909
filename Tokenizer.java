@@ -38,7 +38,7 @@ public class Tokenizer {
 	private BufferedReader bReader;
 	
 	//two different modes of operation depending on which classification method is used
-	private boolean multiTopic = false; 
+	private boolean multiTopic = true; 
 	
 	public Tokenizer(List<ReutersDocument> documentSet) {
 	

@@ -197,7 +197,7 @@ public class Tokenizer {
 			writer.write("@RELATION 'documents'\n\n");
 			writer.write("@ATTRIBUTE words string\n");
 			writer.write("@ATTRIBUTE lewissplit {train,test} \n");		//this is needed to split training+test data 
-			writer.write("@ATTRIBUTE class {"+topicString+"}\n\n");
+			writer.write("@ATTRIBUTE class-att {"+topicString+"}\n\n");
 			
 			writer.write("@DATA\n");
 			

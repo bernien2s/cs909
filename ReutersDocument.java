@@ -6,7 +6,7 @@ public class ReutersDocument {
 
 	//attribute values
 	private int docid;
-	private String TOPICS;
+	private String TOPICS;	//this is more of a boolean 
 	private String LEWISSPLIT;
 	private String CGISPLIT;
 	private String OLDID;
@@ -21,7 +21,7 @@ public class ReutersDocument {
 	private Boolean TESTTRAINING;
 	
 	//these are also elements, but have been separated as they are an "aftermarket addition"
-	private String TOPICLIST;
+	List<String> TOPICLIST = new ArrayList<String>();
 	
 	//Constructor for initial parsing.
 	public ReutersDocument (String topics, String lewissplit, String cgisplit, String oldid, String newid, String title, String dateline, String text) {
@@ -168,14 +168,37 @@ public class ReutersDocument {
 	
 	}
 	
+	public void addTopic(String topic) {
+		TOPICLIST.add(topic);
+	}
+	
+	public String getTopicList() {
+		String ret = ""; 
+		
+		int i = 0;
+		
+		for (String topic : TOPICLIST) {
+			if (i != 0) {
+				ret = ret + ":";
+			}
+			
+			ret = ret + topic; 
+			
+			i++;
+		}
+		
+		return ret; 
+	}
+	
+	
 	//aftermarket additions (may need to be deleted)
-	public void setTopicList(String topic) {
+	/*public void setTopicList(String topic) {
 		TOPICLIST = topic; 
 	}
 	
 	public String getTopicList() {
 		return TOPICLIST; 
-	}
+	}*/
 }
 
 

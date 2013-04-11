@@ -196,6 +196,10 @@ public class ReutersDocument {
 		return ret; 
 	}
 	
+	public List<String> getTopicArrayList() {
+		return TOPICLIST; 
+	}
+	
 	
 	//aftermarket additions (may need to be deleted)
 	/*public void setTopicList(String topic) {

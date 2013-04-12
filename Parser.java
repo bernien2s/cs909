@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -33,16 +34,38 @@ public class Parser {
 	public static void main (String[] args) {
 		
 		//this main will eventually be abstracted out to a handler class
+			
+		//create a list of all of the sgm files
+		File dir = new File("reuters21578");
+		File[] files = dir.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.toLowerCase().endsWith(".sgm");
+			}
+		});
 		
-		//file path for reuters files
-		dirpath = "reuters21578/reut2-0";
-
-		//has this file been converted from SGML to our preferred XML yet? 
-		File f = new File(dirpath + args[0] + ".xml");
-		if(!f.exists()) { 
-			loadSGMFile(args[0]);
+		
+		//convert all unconverted SGML files to XML, which we prefer
+		for (File f : files) {
+			//change file extension to xml 
+			f = new File((f.toString().substring(0, f.toString().lastIndexOf('.')) + ".xml"));
+			
+			//convert, if not already converted 
+			if (!f.exists()) {
+				loadSGMFile(args[0]);
+			}
 		}
 		
+
+		
+		//has this file been converted from SGML to our preferred XML yet? 
+		/*File f = new File(dirpath + args[0] + ".xml");
+		if(!f.exists()) { 
+			loadSGMFile(args[0]);
+		}*/
+		
+		//at this point merge all of the xml files together
+		
+		/*
 		//call file load
 		parseXMLFile(args[0]);
 		
@@ -53,7 +76,7 @@ public class Parser {
 		completedCollection = tk.tokenizeDocumentSet();
 		
 		System.out.println("(Tokenizer): Tokenization complete, " + completedCollection.size() + "documents.");
-	
+		*/
 		//PLSA plsaModel = new PLSA();	
 		//plsaModel.performLSA(completedCollection);
 	
@@ -100,6 +123,10 @@ public class Parser {
 	
 	}
 	
+	public static void loadSGMFiles(File[] f) {
+	
+	}
+	
 	public static void loadSGMFile(String sgmNumber) {
 	
 		//Loads the requested SGM file, removing noise and converting into
@@ -127,7 +154,7 @@ public class Parser {
 			//c)Write to file
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			bw.write("<ReutersRoot>");
+			//bw.write("<ReutersRoot>");
 			
 			while ((ln = br.readLine()) != null) {
 				if(!ln.contains("DOCTYPE")) {
@@ -135,13 +162,13 @@ public class Parser {
 				} 
 			}
 			
-			bw.write("</ReutersRoot>");
+			//bw.write("</ReutersRoot>");
 		
 			bw.flush();
 			bw.close();
 			
-			parser.parse(dirpath+sgmNumber+".xml", handler);
-			System.out.println("(PARSER): Parsing complete");
+			//parser.parse(dirpath+sgmNumber+".xml", handler);
+			//System.out.println("(PARSER): Parsing complete");
 			
 		
 		} catch (Exception e) {

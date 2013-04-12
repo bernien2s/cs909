@@ -184,7 +184,7 @@ public class Tokenizer {
 			while((tmpLine = reader.readLine())!=null) {
 				
 				if (topicString=="") {
-					topicString = null;
+					topicString = "null,acq";
 				} else {
 					topicString = topicString + "," + tmpLine;
 				}

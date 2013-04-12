@@ -4,12 +4,15 @@ import java.util.*;
 
 public class ReutersDocument {
 
+	//attribute values
 	private int docid;
-	private String TOPICS;
+	private String TOPICS;	//this is more of a boolean 
 	private String LEWISSPLIT;
 	private String CGISPLIT;
 	private String OLDID;
 	private String NEWID;
+	
+	//element values
 	private String TITLE;
 	private String DATELINE;
 	private String TEXT;
@@ -17,8 +20,10 @@ public class ReutersDocument {
 	private String[] BODYTOKENS;
 	private Boolean TESTTRAINING;
 	
+	//these are also elements, but have been separated as they are an "aftermarket addition"
+	List<String> TOPICLIST = new ArrayList<String>();
+	
 	//Constructor for initial parsing.
-
 	public ReutersDocument (String topics, String lewissplit, String cgisplit, String oldid, String newid, String title, String dateline, String text) {
 
 		this.TOPICS = topics;
@@ -162,9 +167,47 @@ public class ReutersDocument {
 		return BODYTOKENS;
 	
 	}
+	
+	public void addTopic(String topic) {
+		TOPICLIST.add(topic);
+	}
+	
+	public String getTopicList() {
+		String ret = ""; 
+		
+		int i = 0;
+		
+		for (String topic : TOPICLIST) {
+			/*if (i != 0) {
+				ret = ret + ":";
+			}
+			
+			ret = ret + topic; 
+			*/
+			
+			//temporarily only use the first topic
+			if(i==0) {
+				ret = topic; 
+			}
+			
+			i++;
+		}
+		
+		return ret; 
+	}
+	
+	public List<String> getTopicArrayList() {
+		return TOPICLIST; 
+	}
+	
+	
+	//aftermarket additions (may need to be deleted)
+	/*public void setTopicList(String topic) {
+		TOPICLIST = topic; 
+	}
+	
+	public String getTopicList() {
+		return TOPICLIST; 
+	}*/
+
 }
-
-
-
-
-

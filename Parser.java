@@ -26,12 +26,16 @@ public class Parser {
 	*/
 	
 	private static String dirpath;
+	private static String directory;
 	private static int sgmCount;
 	private static List<ReutersDocument> completedCollection;
 	
 	public Parser () {}
 	
 	public static void main (String[] args) {
+	
+		dirpath = "reuters21578/reut2-0";				//legacy 
+		directory = "reuters21578";
 		
 		//this main will eventually be abstracted out to a handler class
 			
@@ -43,40 +47,21 @@ public class Parser {
 			}
 		});
 		
+		//stick all of the files into the sgm parser
+		loadSGMFiles(files);
 		
-		//convert all unconverted SGML files to XML, which we prefer
-		for (File f : files) {
-			//change file extension to xml 
-			f = new File((f.toString().substring(0, f.toString().lastIndexOf('.')) + ".xml"));
-			
-			//convert, if not already converted 
-			if (!f.exists()) {
-				loadSGMFile(args[0]);
-			}
-		}
-		
-
-		
-		//has this file been converted from SGML to our preferred XML yet? 
-		/*File f = new File(dirpath + args[0] + ".xml");
-		if(!f.exists()) { 
-			loadSGMFile(args[0]);
-		}*/
-		
-		//at this point merge all of the xml files together
-		
-		/*
+/*
 		//call file load
-		parseXMLFile(args[0]);
+		parseXMLFile(directory + "/complete.xml");
 		
 		System.out.println("(Parser): Parsing complete.");
 		
 		//pass to tokenizer for now
 		Tokenizer tk = new Tokenizer(completedCollection);
-		completedCollection = tk.tokenizeDocumentSet();
+		completedCollection = tk.tokenizeDocumentSet();*/
 		
-		System.out.println("(Tokenizer): Tokenization complete, " + completedCollection.size() + "documents.");
-		*/
+		//System.out.println("(Tokenizer): Tokenization complete, " + completedCollection.size() + "documents.");
+		
 		//PLSA plsaModel = new PLSA();	
 		//plsaModel.performLSA(completedCollection);
 	
@@ -87,7 +72,7 @@ public class Parser {
 
 	}
 	
-	public static void parseXMLFile(String filenum) {
+	public static void parseXMLFile(String file) {
 	
 		//Loads the requested XML file and splits out the desired tags that we are
 		//interested in. This will eventually go to a tokenizer and is stored as
@@ -103,7 +88,7 @@ public class Parser {
 		try {
 	
 			SAXParser parser = factory.newSAXParser();
-			parser.parse(dirpath+filenum+".xml", handler);
+			parser.parse(file, handler);
 			documentCollection = handler.getCompletedCollection();
 			System.out.println("(ReutersDocument): Last documented to be added");
 			System.out.println("(ReutersDocument): PROPERTIES:" + documentCollection.remove(documentCollection.size()-1).getTopics() + "/" + documentCollection.remove(documentCollection.size()-1).getLewis() + "/" + documentCollection.remove(documentCollection.size()-1).getCgi() + "/" + documentCollection.remove(documentCollection.size()-1).getoldid() + "/" + documentCollection.remove(documentCollection.size()-1).getnewid());
@@ -124,11 +109,6 @@ public class Parser {
 	}
 	
 	public static void loadSGMFiles(File[] f) {
-	
-	}
-	
-	public static void loadSGMFile(String sgmNumber) {
-	
 		//Loads the requested SGM file, removing noise and converting into
 		//a well formed XML file that exists in the reuters21578 subdirectory.
 		//Essentially a deprecated method now that we have clean xml files.
@@ -136,7 +116,7 @@ public class Parser {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
 		DefaultHandler handler = new DefaultHandler();
-	
+		
 		try {
 			
 			//1) First add a root node as file isn't well formed.
@@ -144,31 +124,35 @@ public class Parser {
 		    SAXParser parser = factory.newSAXParser();
 			
 			//a)Temp file
-			File file = new File(dirpath+sgmNumber+".xml");
+			File file = new File(directory + "/complete.xml");
 			file.createNewFile();
 			
-			//b)Load sgm file
-			File sgmFile = new File(dirpath+sgmNumber+".sgm");
-			BufferedReader br = new BufferedReader(new FileReader(dirpath+sgmNumber+".sgm"));
 			
 			//c)Write to file
 			FileWriter fw = new FileWriter(file.getAbsoluteFile());
 			BufferedWriter bw = new BufferedWriter(fw);
-			//bw.write("<ReutersRoot>");
 			
-			while ((ln = br.readLine()) != null) {
-				if(!ln.contains("DOCTYPE")) {
-					bw.write(ln.replaceAll("&#","")+"\n");
-				} 
+			bw.write("<ReutersRoot>");
+			
+			//go over each file reading and writing into the new file 
+			for (File sgmFile : f) {
+			
+				BufferedReader br = new BufferedReader(new FileReader(sgmFile));
+				
+				while ((ln = br.readLine()) != null) {
+					if(!ln.contains("DOCTYPE")) {
+						bw.write(ln.replaceAll("&#","")+"\n");
+					} 
+				}
 			}
 			
-			//bw.write("</ReutersRoot>");
+			bw.write("</ReutersRoot>");
 		
 			bw.flush();
 			bw.close();
 			
-			//parser.parse(dirpath+sgmNumber+".xml", handler);
-			//System.out.println("(PARSER): Parsing complete");
+			parser.parse(directory + "/complete.xml", handler);
+			System.out.println("(PARSER): Parsing complete");
 			
 		
 		} catch (Exception e) {
@@ -176,7 +160,6 @@ public class Parser {
 			System.out.println(e.toString());
 		
 		}
-	
 	}
 	
 	public static List<ReutersDocument> getCompletedCollection() {

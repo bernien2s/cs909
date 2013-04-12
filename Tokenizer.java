@@ -57,6 +57,8 @@ public class Tokenizer {
 		String tmpLine = "";
 		List<String> tokenList = new ArrayList<String>();
 		
+		System.out.println("(Tokenizer): Tokenizing document set");
+		
 		//pull in stopwords and place in hash table to be used later.
 		try { 
 		
@@ -91,34 +93,47 @@ public class Tokenizer {
 		for (ReutersDocument document : documentSet) {
 			
 			//get body text from current document
-			body = document.getText();
+			if (document.getText()!=null) {
 			
-			try {
-					
-				//enter text into a tokenizer object
-				tokenizerObject = new StreamTokenizer(new StringReader(body));
+				body = document.getText();
+			
+			} else if (document.getTitle()!=null) {
+			
+				body = document.getTitle();
+			
+			} else {
 				
-				while(tokenizerObject.nextToken() != StreamTokenizer.TT_EOF){
+				body = "";
 				
-					if(tokenizerObject.ttype == StreamTokenizer.TT_WORD) {
+			}
+			
+				try {
 					
-						//normalize case of words.
-						if(!isStopWord(tokenizerObject.sval.toLowerCase())) {		
-							//pass to stem words method.
-							tokenList.add(stemWord(tokenizerObject.sval.toLowerCase()));
+					//enter text into a tokenizer object
+					tokenizerObject = new StreamTokenizer(new StringReader(body));
+				
+					while(tokenizerObject.nextToken() != StreamTokenizer.TT_EOF){
+				
+						if(tokenizerObject.ttype == StreamTokenizer.TT_WORD) {
+					
+							//normalize case of words.
+							if(!isStopWord(tokenizerObject.sval.toLowerCase())) {		
+								//pass to stem words method.
+								tokenList.add(stemWord(tokenizerObject.sval.toLowerCase()));
+							}
+						
+						} else if(tokenizerObject.ttype == StreamTokenizer.TT_EOL) {
+							System.out.println();	
 						}
 						
-					} else if(tokenizerObject.ttype == StreamTokenizer.TT_EOL) {
-						System.out.println();	
 					}
-						
+					
+				} catch (Exception e) {
+			
+					System.out.println("(TOKENIZER): Tokenizer failed");
+					System.out.println(e.toString());
+			
 				}
-			
-			} catch (Exception e) {
-			
-				e.toString();
-			
-			}
 			
 			//set body tokens
 			tokenArray = (String[]) tokenList.toArray(new String[0]);
@@ -126,6 +141,8 @@ public class Tokenizer {
 			
 			//dispose contents of token list
 			tokenList.clear();
+			tokenArray = null;
+			
 		
 		}
 		
@@ -167,10 +184,13 @@ public class Tokenizer {
 		//This is appropriate for Vector Space and Topic Based Vector Space Model.
 		//Convert to CSV and then to ARFF.
 		
-		File file = new File("reuters21578/arff/reut2-test.arff");
+		System.out.println("(Tokenizer): Outputting to Arff");
+		
+		File file = new File("reuters21578/arff/reut2-all.arff");
 		File topicsfile = new File("reuters21578/all-topics-strings.lc.txt");
 		String tmpLine = "";
 		String topicString = "";
+		multiTopic = false;
 		
 		List<String> topicList = new ArrayList<String>();
 	
@@ -187,6 +207,8 @@ public class Tokenizer {
 			
 			//read and store topics list
 			while((tmpLine = reader.readLine())!=null) {
+				
+				System.out.println(tmpLine);
 				
 				if (topicString=="") {
 					topicString = null;
@@ -241,7 +263,7 @@ public class Tokenizer {
 				if (!multiTopic) {
 				
 					//write out a single class (the first one available)
-					if (!(null == doc.getTopicList())) {
+					if (!(doc.getTopicList()=="")) {
 						writer.write(",'" + doc.getTopicList() + "'");
 					}
 					else {

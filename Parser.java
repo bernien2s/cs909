@@ -5,12 +5,17 @@ import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.InputSource;
 import java.io.BufferedWriter;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
+import java.io.InputStream;
+import java.io.FileInputStream;
+import java.io.Reader;
+import java.io.InputStreamReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -50,17 +55,11 @@ public class Parser {
 		//stick all of the files into the sgm parser
 		loadSGMFiles(files);
 		
-/*
-		//call file load
-		parseXMLFile(directory + "/complete.xml");
-		
-		System.out.println("(Parser): Parsing complete.");
-		
 		//pass to tokenizer for now
 		Tokenizer tk = new Tokenizer(completedCollection);
-		completedCollection = tk.tokenizeDocumentSet();*/
+		completedCollection = tk.tokenizeDocumentSet();
 		
-		//System.out.println("(Tokenizer): Tokenization complete, " + completedCollection.size() + "documents.");
+		System.out.println("(Tokenizer): Tokenization complete, written to ARFF");
 		
 		//PLSA plsaModel = new PLSA();	
 		//plsaModel.performLSA(completedCollection);
@@ -109,13 +108,11 @@ public class Parser {
 	}
 	
 	public static void loadSGMFiles(File[] f) {
-		//Loads the requested SGM file, removing noise and converting into
-		//a well formed XML file that exists in the reuters21578 subdirectory.
-		//Essentially a deprecated method now that we have clean xml files.
 		
+		List<ReutersDocument> documentCollection = new ArrayList<ReutersDocument>();
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		factory.setNamespaceAware(true);
-		DefaultHandler handler = new DefaultHandler();
+		SAXDefaultHandler handler = new SAXDefaultHandler(documentCollection);
 		
 		try {
 			
@@ -151,8 +148,17 @@ public class Parser {
 			bw.flush();
 			bw.close();
 			
-			parser.parse(directory + "/complete.xml", handler);
-			System.out.println("(PARSER): Parsing complete");
+			//Force input source to encode as UTF-8.
+			InputStream is = new FileInputStream(file);
+			Reader reader = new InputStreamReader(is,"UTF-8");
+			
+			InputSource source = new InputSource(reader);
+		    source.setEncoding("UTF-8");
+
+			parser.parse(source, handler);
+			completedCollection = handler.getCompletedCollection();
+
+			System.out.println("(PARSER): Parsing complete - " + completedCollection.size());
 			
 		
 		} catch (Exception e) {
@@ -179,6 +185,7 @@ class SAXDefaultHandler extends DefaultHandler {
 	private boolean dateline = false;
 	private boolean topics = false;
 	private boolean body = false;
+	private boolean bodypresent = false;
 	private boolean endofdoc = false;
 	private boolean endoffile = false;
 	private String bodytext;
@@ -199,7 +206,16 @@ class SAXDefaultHandler extends DefaultHandler {
 		
 			//create new reuters document.
 			document = new ReutersDocument();
-			document.setLewis(attributes.getValue("LEWISSPLIT"));
+			
+			//If split attribute is not-used, just whack into training set.
+			
+			if (attributes.getValue("LEWISSPLIT").compareTo("NOT-USED")!=0) {
+				document.setLewis(attributes.getValue("LEWISSPLIT"));
+			} else {
+				document.setLewis("train");	
+			}
+			
+			//set remaining attributes
 			document.setCgi(attributes.getValue("CGISPLIT"));
 			document.setoldid(attributes.getValue("OLDID"));
 			document.setnewid(attributes.getValue("NEWID"));
@@ -216,6 +232,7 @@ class SAXDefaultHandler extends DefaultHandler {
 
 		if (qName.equalsIgnoreCase("body")) {
 			body = true;
+			bodypresent = true;
 		}
 		
 		if (qName.equalsIgnoreCase("topics")) {
@@ -287,6 +304,9 @@ class SAXDefaultHandler extends DefaultHandler {
 			topics = false;
 		}
 		
+		if (qName.equalsIgnoreCase("title")) {
+			title = false;
+		}
 	}
 	
 	public List<ReutersDocument> getCompletedCollection() {

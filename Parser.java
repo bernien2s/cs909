@@ -23,6 +23,9 @@ import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
 
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils.DataSource;
+
 public class Parser {
 
 	/*Suggested structure:
@@ -38,12 +41,42 @@ public class Parser {
 	private static int sgmCount;
 	private static List<ReutersDocument> completedCollection;
 	
+	private static CustomModel model;  
+	
+	private static DataSource source; 
+	private static Instances data;	
+	
 	public Parser () {}
 	
 	public static void main (String[] args) {
 	
 		dirpath = "reuters21578/reut2-0";				//legacy 
 		directory = "reuters21578";
+		
+		//select model based on command line switch
+		if (args.length == 0) {
+			//some default action
+			System.out.println("Usage:");
+			System.out.println("Windows: java -cp .;weka.jar Parser {1-3}");
+			System.out.println("*Nix   : java -cp .:weka.jar Parser {1-3}");
+			System.out.println("1. MDM");
+			System.out.println("2. PLSA");
+			System.out.println("3. TF-IDF");
+			System.exit(-1);
+		} else {
+			switch(Integer.parseInt(args[0])) {
+				case 1: 
+					model = new MDM(); 
+					break; 
+				case 2: 
+					break; 
+				case 3:
+					break; 
+				default: 
+					break;
+			}
+		
+		}		
 		
 		//this main will eventually be abstracted out to a handler class
 			
@@ -55,21 +88,37 @@ public class Parser {
 			}
 		});
 		
-		//stick all of the files into the sgm parser
-		loadSGMFiles(files);
+		//regenerate the arff file if something has changed
+		if(filesChanged(files)) {
+			//stick all of the files into the sgm parser
+			loadSGMFiles(files);
+			
+			//pass to lemmatizer? (more accurate classification)
+			//better than stemming but more lookup involved (http://en.wikipedia.org/wiki/Lemmatisation)
+			//uses lucene.
+				
+			//pass to tokenizer for now
+			Tokenizer tk = new Tokenizer(completedCollection);
+			completedCollection = tk.tokenizeDocumentSet();
+			
+			System.out.println("(Tokenizer): Tokenization complete, written to ARFF");
+		} else {
+			System.out.println("(Parser): Files remain unchanged, skipping parsing process");
+		}
 		
-		//pass to tokenizer for now
-		Tokenizer tk = new Tokenizer(completedCollection);
-		completedCollection = tk.tokenizeDocumentSet();
-		
-		System.out.println("(Tokenizer): Tokenization complete, written to ARFF");
+		//load arff data, ready to be passed to the various models 
+		try{	
+			source = new DataSource(directory + "/arff/reut2-all.arff");
+			data = source.getDataSet();
+		} catch (Exception e) {
+			//without the arff file in memory there is little else that we can do, kill the proggy with a helpful message 
+			System.err.println("Unable to open arff file, perhaps there are problems with permission?");
+			e.printStackTrace(); 
+			System.exit(-1);
+		}
 		
 		//PLSA plsaModel = new PLSA();	
 		//plsaModel.performLSA(completedCollection);
-	
-		//pass to lemmatizer? (more accurate classification)
-		//better than stemming but more lookup involved (http://en.wikipedia.org/wiki/Lemmatisation)
-		//uses lucene.
 		
 
 	}

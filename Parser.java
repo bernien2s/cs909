@@ -57,11 +57,12 @@ public class Parser {
 		if (args.length == 0) {
 			//some default action
 			System.out.println("Usage:");
-			System.out.println("Windows: java -cp .;weka.jar Parser {1-3}");
-			System.out.println("*Nix   : java -cp .:weka.jar Parser {1-3}");
+			System.out.println("Windows: java -cp .;weka.jar Parser {1-3} [-f]");
+			System.out.println("*Nix   : java -cp .:weka.jar Parser {1-3} [-f]");
 			System.out.println("1. MDM");
 			System.out.println("2. PLSA");
 			System.out.println("3. TF-IDF");
+			System.out.println("-f force regeneration");
 			System.exit(-1);
 		} else {
 			switch(Integer.parseInt(args[0])) {
@@ -76,7 +77,16 @@ public class Parser {
 					break;
 			}
 		
-		}		
+		}	
+				
+		if (args[1].equals("-f")) {	
+			File lm = new File("lastModified.dat");
+			try{
+				lm.delete();
+			} catch (Exception e) {
+				System.err.println("Error: try deleting lastModified.dat");
+			}
+		}
 		
 		//this main will eventually be abstracted out to a handler class
 			

@@ -127,6 +127,11 @@ public class Parser {
 			System.exit(-1);
 		}
 		
+		//perform data model (my view is that the preprocessor will be in its own class w/ instantiation in the model)
+		model.runModel(data); 
+		
+		//get results? 
+		
 		//PLSA plsaModel = new PLSA();	
 		//plsaModel.performLSA(completedCollection);
 		

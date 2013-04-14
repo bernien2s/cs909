@@ -1,7 +1,9 @@
+import weka.core.Instances;
+
 public class Preprocessor {
 
 	//private modifier makes this a "static" class 
-	private preprocessor() {
+	private Preprocessor() {
  		//do nothing
 	}
 		

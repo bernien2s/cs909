@@ -1,5 +1,7 @@
+import weka.core.Instances;
+
 interface CustomModel {
 	
-	void runModel(); 
+	void runModel(Instances data); 
 
 }

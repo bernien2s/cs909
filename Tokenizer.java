@@ -30,8 +30,10 @@ public class Tokenizer {
 	*/
 
 	private List<ReutersDocument> documentSet;
-	//private List<ReutersDocument> testSet;
-	//private List<ReutersDocument> trainingSet;
+	
+	private List<ReutersDocument> testSet;
+	private List<ReutersDocument> trainingSet;
+	
 	private StreamTokenizer	tokenizerObject;
 	private File stopwords;
 	private Hashtable<String, String> stopSet;
@@ -56,6 +58,9 @@ public class Tokenizer {
 		String[] tokenArray;
 		String tmpLine = "";
 		List<String> tokenList = new ArrayList<String>();
+		
+		List<ReutersDocument> trainingSet = new ArrayList<ReutersDocument>();
+		List<ReutersDocument> testSet = new ArrayList<ReutersDocument>();
 		
 		System.out.println("(Tokenizer): Tokenizing document set");
 		
@@ -147,8 +152,23 @@ public class Tokenizer {
 		}
 		
 		//stem documentset
-	
-		outputCollectionToArff(documentSet);
+		
+		//split documentSet into training and test set
+		for(ReutersDocument d : documentSet) {
+			//determine where to put the data item
+			if(d.getLewis().equals("train")) {
+				trainingSet.add(d);
+			} else {
+				testSet.add(d);
+			}
+		}
+		
+		System.out.println("(Tokenizer): Training set size is " + trainingSet.size()); 
+		System.out.println("(Tokenizer): Test set size is " + testSet.size());
+		
+		//output to separate arff files 
+		outputCollectionToArff(trainingSet, "train");
+		outputCollectionToArff(testSet, "test");
 	
 		return documentSet;
 		
@@ -178,7 +198,7 @@ public class Tokenizer {
 		
 	}
 	
-	public void outputCollectionToArff(List<ReutersDocument> docSet) {
+	public void outputCollectionToArff(List<ReutersDocument> docSet, String type) {
 	
 		//Create arff file from XML file for StringToWordVector representation.
 		//This is appropriate for Vector Space and Topic Based Vector Space Model.
@@ -186,13 +206,21 @@ public class Tokenizer {
 		
 		System.out.println("(Tokenizer): Outputting to Arff");
 		
-		File file = new File("reuters21578/arff/reut2-all.arff");
+		
+		File file;		
 		File topicsfile = new File("reuters21578/all-topics-strings.lc.txt");
 		String tmpLine = "";
 		String topicString = "";
 		multiTopic = false;
 		
 		List<String> topicList = new ArrayList<String>();
+		
+		//depending on the type of file, save to training or test file 
+		if(type.equals("train")) {
+			file = new File("reuters21578/arff/reut2-train.arff");
+		} else {
+			file = new File("reuters21578/arff/reut2-test.arff");
+		}
 	
 		try {
  
@@ -224,7 +252,6 @@ public class Tokenizer {
 			//write arff headers to File
 			writer.write("@RELATION 'documents'\n\n");
 			writer.write("@ATTRIBUTE words string\n");
-			writer.write("@ATTRIBUTE lewissplit {train,test} \n");		//this is needed to split training+test data 
 			
 			//if we are using multiple topics, write each topic out 
 			//as a boolean attribute otherwise just use the first attribute 
@@ -255,9 +282,6 @@ public class Tokenizer {
 				
 				//write out topics for class (null if n/a)				
 				writer.write("'");
-				
-				//write out the lewissplit attribute
-				writer.write("," + doc.getLewis().toLowerCase());
 				
 				//if it's a multitopic we will spam with boolean vals, otherwise now 
 				if (!multiTopic) {

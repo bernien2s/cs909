@@ -1,3 +1,6 @@
 *.class
 .DS_Store
+reuters21578/*.arff
+reuters21578/*.xml
 *.arff
+*.xml

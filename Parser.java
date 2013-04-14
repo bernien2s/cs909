@@ -16,6 +16,9 @@ import java.io.InputStream;
 import java.io.FileInputStream;
 import java.io.Reader;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
@@ -172,6 +175,42 @@ public class Parser {
 	
 		return completedCollection;
 	
+	}
+	
+	private static boolean filesChanged(File[] f ) {
+		long[] oldDates = new long[f.length]; 
+		long[] currentDates = new long[f.length];
+		boolean changed = false; 
+		
+		try{
+			//retrieve last modified array 
+			ObjectInputStream in = new ObjectInputStream(new FileInputStream("lastModified.dat"));
+			oldDates = (long[]) in.readObject();
+			in.close();
+		} catch (Exception e) { 
+			changed = true;
+		}
+		
+		// go over each file, retrieving the last modified date	
+		for(int i = 0; i < f.length; i++) {
+			currentDates[i] = f[i].lastModified();
+			
+			//if file has different date, then the file has been changed
+			if(currentDates[i] != oldDates[i]) {
+				changed = true; 
+			}
+		}
+		
+		//dump the array of changed values to file
+		try {
+			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream("./lastModified.dat"));
+			out.writeObject(currentDates);
+			out.flush();
+			out.close();
+		} catch (Exception e) { System.out.println(":(");
+		}
+		
+		return changed; 
 	}
 
 }

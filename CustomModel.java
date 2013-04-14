@@ -1,0 +1,5 @@
+interface CustomModel {
+	
+	void runModel(); 
+
+}

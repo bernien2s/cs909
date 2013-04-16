@@ -57,8 +57,8 @@ public class Parser {
 		if (args.length == 0) {
 			//some default action
 			System.out.println("Usage:");
-			System.out.println("Windows: java -cp .;weka.jar Parser {1-3} [-f]");
-			System.out.println("*Nix   : java -cp .:weka.jar Parser {1-3} [-f]");
+			System.out.println("Windows: java -Xmx256m -cp .;weka.jar Parser {1-3} [-f]");
+			System.out.println("*Nix   : java -Xmx256m -cp .:weka.jar Parser {1-3} [-f]");
 			System.out.println("1. MDM");
 			System.out.println("2. PLSA");
 			System.out.println("3. TF-IDF");
@@ -72,8 +72,10 @@ public class Parser {
 				case 2: 
 					break; 
 				case 3:
+					model = new TFIDF();
 					break; 
 				default: 
+					model = new SWM();
 					break;
 			}
 		
@@ -128,13 +130,7 @@ public class Parser {
 		}
 		
 		//perform data model (my view is that the preprocessor will be in its own class w/ instantiation in the model)
-		model.runModel(data); 
-		
-		//get results? 
-		
-		//PLSA plsaModel = new PLSA();	
-		//plsaModel.performLSA(completedCollection);
-		
+		model.runModel(data); 		
 
 	}
 	
@@ -204,7 +200,7 @@ public class Parser {
 				BufferedReader br = new BufferedReader(new FileReader(sgmFile));
 				
 				while ((ln = br.readLine()) != null) {
-					if(!ln.contains("DOCTYPE")) {
+				if(!ln.contains("DOCTYPE")) {
 						bw.write(ln.replaceAll("&#","")+"\n");
 					} 
 				}

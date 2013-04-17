@@ -7,6 +7,7 @@ import weka.classifiers.Classifier;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.Evaluation;
+import weka.classifiers.trees.J48;
 
 public class ClassificationSuite  {
 	
@@ -18,23 +19,55 @@ public class ClassificationSuite  {
 	
 		//Train Classifier
 		
+		//print out instance
+		System.out.println(train.instance(2));
+		
 		//Set index
-		train.setClassIndex(3);
+		train.setClassIndex(2);
+		System.out.println(train.classIndex());
 		
 		try {
 		
-		//Create Classifier
-		Classifier nbModel = (Classifier) new NaiveBayes();
-		nbModel.buildClassifier(train);
+			//Create Classifier
+			Classifier nbModel = (Classifier) new NaiveBayes();
+			nbModel.buildClassifier(train);
 		
-		//Test Classifier
-		Evaluation nbTest = new Evaluation(train);
-		nbTest.evaluateModel(nbModel, test);
+			//Test Classifier
+			Evaluation nbTest = new Evaluation(train);
+			nbTest.evaluateModel(nbModel, test);
 		
-		returnResults(nbTest);
+			returnResults(nbTest);
 		
 		} catch (Exception err) {
 			
+			System.out.println(err.toString());
+		
+		}
+		
+	}
+	
+	/*
+	*	Decision Tree Classification Algorithm
+	*/
+	
+	public static void runJ48(Instances train, Instances test) {
+	
+		try {
+		
+			train.setClassIndex(2);
+	
+			//Train classifier
+			Classifier j48Model = (Classifier) new J48();
+			j48Model.buildClassifier(train);
+		
+			//Test Classifier
+			Evaluation j48Test = new Evaluation(train);
+			j48Test.evaluateModel(j48Model, test);
+		
+			returnResults(j48Test);
+			
+		} catch (Exception err) {
+		
 			System.out.println(err.toString());
 		
 		}
@@ -48,14 +81,7 @@ public class ClassificationSuite  {
 	public static void runMLP(Instances train, Instances test) {
 		
 	}
-	
-	/*
-	*	Decision Tree Classification Algorithm
-	*/
-	
-	public static void runJ48(Instances train, Instances test) {
-		
-	}
+
 	
 	/*
 	*	Nearest-Neighbour Classification Algorithm

@@ -15,7 +15,9 @@ public class SWM implements CustomModel {
 		this.swv = new StringToWordVector();  
 	}
 	
-	public void runModel(Instances is) {
+	public Instances runModel(Instances is) {
+	
+		Instances wordVectors = null;
 	
 		//Set filter options
 		String swvOptions[] = {"-L"};
@@ -25,11 +27,15 @@ public class SWM implements CustomModel {
 		try {
 		
 			this.swv.setInputFormat(is);
+			
+			//Set attribute indices
+			this.swv.setAttributeIndicesArray(new int[] { 1 });
+			
 			this.swv.setOptions(swvOptions);
 		
-			Instances wordVectors = this.swv.useFilter(is, this.swv);
+			wordVectors = this.swv.useFilter(is, this.swv);
 			
-			System.out.println("\n\n(SWM Model): Word Vectors -\n\n " + wordVectors);
+			System.out.println("\n\n(SWM Model): Text Model Created");
 
 		
 		} catch (Exception err) {
@@ -37,6 +43,8 @@ public class SWM implements CustomModel {
 			System.out.println("(SWM Model)(Error): " + err.toString());
 		
 		}
+		
+		return wordVectors;
 	
 	}
 }

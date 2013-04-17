@@ -15,7 +15,10 @@ public class TFIDF implements CustomModel {
 		this.swv = new StringToWordVector();  
 	}
 	
-	public void runModel(Instances is) {
+	public Instances runModel(Instances is) {
+		
+		//wordvector instances
+		Instances wordVectors = null;
 		
 		//Set filter options
 		String swvOptions[] = {"-W 1000","-I","-L"};
@@ -25,11 +28,17 @@ public class TFIDF implements CustomModel {
 		try {
 		
 			this.swv.setInputFormat(is);
+					
+			//Set attribute indices
+			this.swv.setAttributeIndicesArray(new int[] { 1 });
+		
 			this.swv.setOptions(swvOptions);
 		
-			Instances wordVectors = this.swv.useFilter(is, this.swv);
+			wordVectors = this.swv.useFilter(is, this.swv);
 			
-			System.out.println("\n\n(TFIDF Model): Word Vectors -\n\n " + wordVectors);
+			System.out.println("(TFIDF Model): Text Model Created");
+			
+			System.out.println(wordVectors.firstInstance());
 
 		
 		} catch (Exception err) {
@@ -37,6 +46,8 @@ public class TFIDF implements CustomModel {
 			System.out.println("(TFIDF Model)(Error): " + err.toString());
 		
 		}
+		
+		return wordVectors;
 		
 	}	
 

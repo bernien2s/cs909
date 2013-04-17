@@ -2,6 +2,6 @@ import weka.core.Instances;
 
 interface CustomModel {
 	
-	void runModel(Instances data); 
+	Instances runModel(Instances data); 
 
 }

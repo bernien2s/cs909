@@ -45,6 +45,8 @@ public class Parser {
 	
 	private static DataSource source; 
 	private static Instances data;	
+	private static Instances trainingData;
+	private static Instances testData;
 	
 	public Parser () {}
 	
@@ -120,8 +122,16 @@ public class Parser {
 		
 		//load arff data, ready to be passed to the various models 
 		try{	
+			//Get global arff file for training and test data
 			source = new DataSource(directory + "/arff/reut2-all.arff");
 			data = source.getDataSet();
+			//Get training data
+			source = new DataSource(directory + "/arff/reut2-train.arff");
+			trainingData = source.getDataSet();
+			//Get test data
+			source = new DataSource(directory + "/arff/reut2-test.arff");
+			testData = source.getDataSet();
+			
 		} catch (Exception e) {
 			//without the arff file in memory there is little else that we can do, kill the proggy with a helpful message 
 			System.err.println("Unable to open arff file, perhaps there are problems with permission?");
@@ -130,7 +140,8 @@ public class Parser {
 		}
 		
 		//perform data model (my view is that the preprocessor will be in its own class w/ instantiation in the model)
-		model.runModel(data); 		
+		
+		ClassificationSuite.runJ48(model.runModel(trainingData), model.runModel(testData)); 		
 
 	}
 	

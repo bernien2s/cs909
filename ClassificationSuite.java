@@ -51,10 +51,10 @@ public class ClassificationSuite  {
 	*/
 	
 	public static void runJ48(Instances train, Instances test) {
-	
 		try {
-		
-			train.setClassIndex(2);
+			
+			train.setClassIndex(0);
+			test.setClassIndex(0);
 	
 			//Train classifier
 			Classifier j48Model = (Classifier) new J48();

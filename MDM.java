@@ -6,7 +6,7 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
 
-public class MDM implements CustomModel{
+public class MDM implements CustomModel {
 	
 	//this can probs be abstracted out at some point... 
 	private StringToWordVector swv; 
@@ -19,10 +19,12 @@ public class MDM implements CustomModel{
 		this.nbm = new NaiveBayesMultinomial();
 	}
 	
-	public void runModel() {
+	public Instances runModel(Instances is) {
 		
 		String swvOptions; 
 		String nbmOptions; 
+		
+		return null;
 	}	
 
 }

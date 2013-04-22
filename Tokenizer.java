@@ -37,6 +37,8 @@ public class Tokenizer {
 	private StreamTokenizer	tokenizerObject;
 	private File stopwords;
 	private Hashtable<String, String> stopSet;
+	private Hashtable<String, String> usedLabels;		//list of topics that have been used at some point
+	private Hashtable<String, String> pointlessTopics;  //list of topics that never occur in the training set
 	private BufferedReader bReader;
 	
 	//two different modes of operation depending on which classification method is used
@@ -46,6 +48,7 @@ public class Tokenizer {
 	
 		this.documentSet = documentSet;
 		stopSet = new Hashtable<String,String>();
+		usedLabels = new Hashtable<String,String>();
 	
 	}
 		
@@ -96,6 +99,18 @@ public class Tokenizer {
 		//proceed to tokenize each document
 		
 		for (ReutersDocument document : documentSet) {
+		
+			//if the document is in the training set we need to do a bit more processing to check what topics are used
+			if(document.getLewis().equals("train")){
+				//get list of topics from document 
+				List<String> docTopicList  = document.getTopicArrayList(); 
+				//iterate over the document topic list comparing each value to the overall topic list
+				for (String top : docTopicList) {
+					if(!usedLabels.containsKey(top)) {
+						usedLabels.put(top, top);
+					}
+				}
+			}
 			
 			//get body text from current document
 			if (document.getText()!=null) {
@@ -260,7 +275,9 @@ public class Tokenizer {
 			} else {
 				//iterate over each and every topic, spaffing to the arff file
 				for (String topic : topicList) {
-					writer.write("@ATTRIBUTE " + topic.replaceAll("\\s","") + "-class" + " {false, true} \n");
+					if(usedLabels.containsKey(topic)){
+						writer.write("@ATTRIBUTE " + topic.replaceAll("\\s","") + "-class" + " {false, true} \n");
+					}
 				}
 				writer.write("\n");
 			}
@@ -299,24 +316,30 @@ public class Tokenizer {
 					if (!(null == doc.getTopicList())) {
 						int j = 0; 
 						for (String topic : topicList) {
-							if (j!=0) {
-								writer.write(",");
-							}
-							if (doc.getTopicArrayList().contains(topic)) {
-								writer.write("true");
-							} else {
-								writer.write("false"); 
+							//hack: only add if in the "used" set
+							if(usedLabels.containsKey(topic)) {
+								if (j!=0) {
+									writer.write(",");
+								}
+								if (doc.getTopicArrayList().contains(topic)) {
+									writer.write("true");
+								} else {
+									writer.write("false"); 
+								}
 							}
 							j++;
 						}
 					} else {
 						int j = 0;
 						for (String topic : topicList) {
-							if (j!=0) {
-								writer.write(",");
+							//hack: only add if in the "used set"
+							if(usedLabels.containsKey(topic)) {
+								if (j!=0) {
+									writer.write(",");
+								}
+							
+								writer.write("false");
 							}
-						
-							writer.write("false");
 							j++;
 						}
 					}

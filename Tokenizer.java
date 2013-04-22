@@ -275,7 +275,9 @@ public class Tokenizer {
 			} else {
 				//iterate over each and every topic, spaffing to the arff file
 				for (String topic : topicList) {
-					writer.write("@ATTRIBUTE " + topic.replaceAll("\\s","") + "-class" + " {false, true} \n");
+					if(usedLabels.containsKey(topic)){
+						writer.write("@ATTRIBUTE " + topic.replaceAll("\\s","") + "-class" + " {false, true} \n");
+					}
 				}
 				writer.write("\n");
 			}
@@ -314,24 +316,30 @@ public class Tokenizer {
 					if (!(null == doc.getTopicList())) {
 						int j = 0; 
 						for (String topic : topicList) {
-							if (j!=0) {
-								writer.write(",");
-							}
-							if (doc.getTopicArrayList().contains(topic)) {
-								writer.write("true");
-							} else {
-								writer.write("false"); 
+							//hack: only add if in the "used" set
+							if(usedLabels.containsKey(topic)) {
+								if (j!=0) {
+									writer.write(",");
+								}
+								if (doc.getTopicArrayList().contains(topic)) {
+									writer.write("true");
+								} else {
+									writer.write("false"); 
+								}
 							}
 							j++;
 						}
 					} else {
 						int j = 0;
 						for (String topic : topicList) {
-							if (j!=0) {
-								writer.write(",");
+							//hack: only add if in the "used set"
+							if(usedLabels.containsKey(topic)) {
+								if (j!=0) {
+									writer.write(",");
+								}
+							
+								writer.write("false");
 							}
-						
-							writer.write("false");
 							j++;
 						}
 					}

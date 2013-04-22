@@ -211,7 +211,7 @@ public class Tokenizer {
 		File topicsfile = new File("reuters21578/all-topics-strings.lc.txt");
 		String tmpLine = "";
 		String topicString = "";
-		multiTopic = false;
+		//multiTopic = false;
 		
 		List<String> topicList = new ArrayList<String>();
 		

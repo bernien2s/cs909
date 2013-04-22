@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.unsupervised.attribute.StringToWordVector;
 
 public class Parser {
 
@@ -139,9 +140,7 @@ public class Parser {
 			e.printStackTrace(); 
 			System.exit(-1);
 		}
-		
-		//perform data model (my view is that the preprocessor will be in its own class w/ instantiation in the model)
-		
+				
 		ClassificationSuite.runJ48(model.runModel(trainingData), model.runModel(testData)); 		
 
 	}

@@ -142,7 +142,7 @@ public class Parser {
 		
 		//perform data model (my view is that the preprocessor will be in its own class w/ instantiation in the model)
 		
-		ClassificationSuite.runJ48(model.runModel(trainingData), model.runModel(testData)); 		
+		ClassificationSuite.runNaiveBayes(model.runModel(trainingData), model.runModel(testData)); 		
 
 	}
 	

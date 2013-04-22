@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Collection;
 import weka.core.Instances;
 import weka.core.converters.TextDirectoryLoader;
 import weka.filters.Filter;
@@ -17,14 +18,13 @@ public class ClassificationSuite  {
 	
 	public static void runNaiveBayes(Instances train, Instances test) {
 	
-		//Train Classifier
-		
-		//print out instance
-		System.out.println(train.instance(2));
+		//Set counts
+		System.out.println("Training set size: " + train.numInstances());
+		System.out.println("Test set size: " + test.numInstances());
 		
 		//Set index
-		train.setClassIndex(2);
-		System.out.println(train.classIndex());
+		train.setClassIndex(0);
+		test.setClassIndex(0);
 		
 		try {
 		
@@ -40,7 +40,7 @@ public class ClassificationSuite  {
 		
 		} catch (Exception err) {
 			
-			System.out.println(err.toString());
+			err.printStackTrace(System.out);
 		
 		}
 		
@@ -52,6 +52,10 @@ public class ClassificationSuite  {
 	
 	public static void runJ48(Instances train, Instances test) {
 		try {
+		
+			//Set counts
+			System.out.println("Training set size: " + train.numInstances());
+			System.out.println("Test set size: " + test.numInstances());
 			
 			train.setClassIndex(0);
 			test.setClassIndex(0);

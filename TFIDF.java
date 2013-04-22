@@ -21,16 +21,23 @@ public class TFIDF implements CustomModel {
 		Instances wordVectors = null;
 		
 		//Set filter options
-		String swvOptions[] = {"-W 1000","-I","-L"};
+		String swvOptions[] = {"-W 1000","-I","-L", "-M 1"};
 		
 		System.out.println("(TFIDF Model): Applying...");
 		
 		try {
 		
+			System.out.println("Instances before processing: " + is.firstInstance());
+			
+			is.setClassIndex(1);
 			this.swv.setInputFormat(is);
 					
 			//Set attribute indices
-			this.swv.setAttributeIndicesArray(new int[] { 1 });
+			this.swv.setAttributeIndices("0");
+			
+			//Do not operate on per class basis
+			//this.swv.setDoNotOperateOnPerClassBasis(true);
+			
 		
 			this.swv.setOptions(swvOptions);
 		
@@ -38,7 +45,7 @@ public class TFIDF implements CustomModel {
 			
 			System.out.println("(TFIDF Model): Text Model Created");
 			
-			System.out.println(wordVectors.firstInstance());
+			System.out.println("Instances after processing: " + wordVectors.firstInstance());
 
 		
 		} catch (Exception err) {

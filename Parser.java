@@ -82,13 +82,14 @@ public class Parser {
 			}
 		
 		}	
-				
-		if (args[1].equals("-f")) {	
-			File lm = new File("lastModified.dat");
-			try{
-				lm.delete();
-			} catch (Exception e) {
-				System.err.println("Error: try deleting lastModified.dat");
+		if (args.length > 1) {	
+			if (args[1].equals("-f")) {	
+				File lm = new File("lastModified.dat");
+				try{
+					lm.delete();
+				} catch (Exception e) {
+					System.err.println("Error: try deleting lastModified.dat");
+				}
 			}
 		}
 		

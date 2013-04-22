@@ -37,6 +37,8 @@ public class Tokenizer {
 	private StreamTokenizer	tokenizerObject;
 	private File stopwords;
 	private Hashtable<String, String> stopSet;
+	private Hashtable<String, String> usedLabels;		//list of topics that have been used at some point
+	private Hashtable<String, String> pointlessTopics;  //list of topics that never occur in the training set
 	private BufferedReader bReader;
 	
 	//two different modes of operation depending on which classification method is used
@@ -46,6 +48,7 @@ public class Tokenizer {
 	
 		this.documentSet = documentSet;
 		stopSet = new Hashtable<String,String>();
+		usedLabels = new Hashtable<String,String>();
 	
 	}
 		
@@ -96,6 +99,18 @@ public class Tokenizer {
 		//proceed to tokenize each document
 		
 		for (ReutersDocument document : documentSet) {
+		
+			//if the document is in the training set we need to do a bit more processing to check what topics are used
+			if(document.getLewis().equals("train")){
+				//get list of topics from document 
+				List<String> docTopicList  = document.getTopicArrayList(); 
+				//iterate over the document topic list comparing each value to the overall topic list
+				for (String top : docTopicList) {
+					if(!usedLabels.containsKey(top)) {
+						usedLabels.put(top, top);
+					}
+				}
+			}
 			
 			//get body text from current document
 			if (document.getText()!=null) {

@@ -15,7 +15,7 @@ public class SWM implements CustomModel {
 		this.swv = new StringToWordVector();  
 	}
 	
-	public Instances runModel(Instances is) {
+	public Instances[] runModel(Instances is, Instances is2) {
 	
 		Instances wordVectors = null;
 	
@@ -44,7 +44,7 @@ public class SWM implements CustomModel {
 		
 		}
 		
-		return wordVectors;
+		return null;
 	
 	}
 }

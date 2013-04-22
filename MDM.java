@@ -19,7 +19,7 @@ public class MDM implements CustomModel {
 		this.nbm = new NaiveBayesMultinomial();
 	}
 	
-	public Instances runModel(Instances is) {
+	public Instances[] runModel(Instances is, Instances is2) {
 		
 		String swvOptions; 
 		String nbmOptions; 

@@ -291,7 +291,7 @@ public class Tokenizer {
 						writer.write(",'" + doc.getTopicList() + "'");
 					}
 					else {
-						writer.write("," + "?");
+						writer.write("," + "null");
 					}
 				} else {
 					writer.write(",");

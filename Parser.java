@@ -142,7 +142,9 @@ public class Parser {
 		
 		//perform data model (my view is that the preprocessor will be in its own class w/ instantiation in the model)
 		
-		ClassificationSuite.runNaiveBayes(model.runModel(trainingData), model.runModel(testData)); 		
+		Instances[] is = model.runModel(trainingData, testData);
+		
+		ClassificationSuite.runNaiveBayes(is[0], is[1]);		
 
 	}
 	

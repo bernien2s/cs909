@@ -9,6 +9,7 @@ import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.Evaluation;
 import weka.classifiers.trees.J48;
+import weka.classifiers.lazy.IBk;
 
 public class ClassificationSuite  {
 	
@@ -92,6 +93,33 @@ public class ClassificationSuite  {
 	*/
 	
 	public static void runKNN(Instances train, Instances test) {
+		
+		//Set counts
+		System.out.println("Training set size: " + train.numInstances());
+		System.out.println("Test set size: " + test.numInstances());
+		
+		//Set index
+		train.setClassIndex(0);
+		test.setClassIndex(0);
+		
+		try {
+		
+			//Create Classifier
+			Classifier nbModel = (Classifier) new IBk(1);
+			nbModel.buildClassifier(train);
+		
+			//Test Classifier
+			Evaluation nbTest = new Evaluation(train);
+			nbTest.evaluateModel(nbModel, test);
+		
+			returnResults(nbTest);
+		
+		} catch (Exception err) {
+			
+			err.printStackTrace(System.out);
+		
+		}
+	
 		
 	}	
 	

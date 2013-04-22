@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
+import weka.filters.unsupervised.attribute.StringToWordVector;
 
 public class Parser {
 
@@ -139,12 +140,12 @@ public class Parser {
 			e.printStackTrace(); 
 			System.exit(-1);
 		}
-		
 		//perform data model (my view is that the preprocessor will be in its own class w/ instantiation in the model)
 		
 		Instances[] is = model.runModel(trainingData, testData);
 		
 		ClassificationSuite.runNaiveBayes(is[0], is[1]);		
+
 
 	}
 	

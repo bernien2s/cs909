@@ -72,7 +72,7 @@ public class ClassificationSuite  {
 			returnResults(j48Test);
 			
 		} catch (Exception err) {
-		
+			err.printStackTrace(); 
 			System.out.println(err.toString());
 		
 		}

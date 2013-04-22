@@ -141,7 +141,7 @@ public class Parser {
 			System.exit(-1);
 		}
 				
-		ClassificationSuite.runJ48(model.runModel(trainingData), model.runModel(testData)); 		
+		ClassificationSuite.runNaiveBayes(model.runModel(trainingData), model.runModel(testData)); 		
 
 	}
 	

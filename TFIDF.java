@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.Random;
 import weka.core.Instances;
 import weka.classifiers.meta.FilteredClassifier;
 import weka.core.converters.TextDirectoryLoader;
@@ -6,6 +7,7 @@ import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
+import weka.classifiers.Evaluation;
 
 /*TFIDF Model with Multiple Classifier Implementations
   - Uses FilteredClassifier
@@ -34,46 +36,42 @@ public class TFIDF implements CustomModel {
 
 		//Apply StringToWordVector TFIDF Option
 		String swvoptions[] = {"-W 100", "-I", "-L", "-M 1"};
+		
+		//Apply classifier to the filtered classifier
 		String classifierOpts[] = {"-W " + classifier};
 		
-		//Set input formats.
+		//Cross validation fold and random seed
+		int folds = 10;
+		Random rand = new Random(1);
 		
 		try {
 			
 			for (int i = 1; i < this.noOfClasses; i++) {
 			
-				//More spaf
+				//Set input format and options for sw and filteredclassifier
 				this.swv.setInputFormat(data);
 				this.swv.setOptions(swvoptions);
 				this.fc.setOptions(classifierOpts);
 				
-				//Remove specific stuff
+				//Remove all attribute classes
 				this.rm.setAttributeIndicesArray(new int[] {0,i});
 				this.rm.setInvertSelection(true);
 				this.rm.setInputFormat(data);
 				
 				//Apply options to remove filter and apply
 				Instances removedData = Filter.useFilter(data, this.rm);
-				System.out.println("(RemoveFilter): Left attribute " + i);
-				
-				//System.out.println(removedData);
+				System.out.println("(RemoveFilter): Left class attribute " + i);
 				
 				//Apply string to word vector filter and builds classifier
 				removedData.setClassIndex(1);
 				this.fc.setFilter(this.swv);
 				
-				this.fc.buildClassifier(removedData);
-			
-				System.out.println("(Class " + i +"): " + this.fc);
-			
-				//Evaluate classifer
-				//Evaluation nbTest = new Evaluation(data);
-				//nbTest.evaluateModel(this.fc, data);
-			
-				//Print results
-				//System.out.print("(Class " + i + "): " );
-				//System.out.println(eval.toSummaryString());
-			
+				//this.fc.buildClassifier(removedData);
+				
+				Evaluation eval = new Evaluation(removedData);
+				eval.crossValidateModel(fc, removedData, folds, rand);
+				System.out.println(eval.toSummaryString());
+				
 			}
 			
 		} catch (Exception err) {

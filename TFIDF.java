@@ -9,6 +9,7 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.Evaluation;
 import weka.classifiers.Classifier;
+import weka.classifiers.functions.LibSVM;
 
 /*TFIDF Model with Multiple Classifier Implementations
   - Uses FilteredClassifier
@@ -69,7 +70,7 @@ public class TFIDF implements CustomModel {
 				System.out.println("(STWFilter): Appled StringToWordVector");
 				
 				//Build classifier on filtered data
-				//this.fc.buildClassifier(removedData);
+				this.fc.buildClassifier(removedData);
 			
 				//Present results and store averages
 				System.out.println("(TFIDFModel): Running evaluation of " + cName + " on TFIDF Model");
@@ -108,9 +109,10 @@ public class TFIDF implements CustomModel {
 		System.out.println("Correctly Classified: " + averagedCorrect +" (" + averagedCorrectPct + "%)");
 		System.out.println("Incorrectly Classified: " + averagedIncorrect + " (" + averagedIncorrectPct + "%)");
 		System.out.println("RMSE: " + averagedRMSE);
-	
 		
 	}
+	
+	
 	
 	
 	/*

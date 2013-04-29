@@ -141,7 +141,10 @@ public class Tokenizer {
 								//pass to stem words method.
 								tokenList.add(stemWord(tokenizerObject.sval.toLowerCase()));
 							}
-						
+							
+						} else if (tokenizerObject.ttype == StreamTokenizer.TT_NUMBER) {
+							//if it's a numeric value then add our "numeric token to the list"
+							tokenList.add("numericalvaluetoken");
 						} else if(tokenizerObject.ttype == StreamTokenizer.TT_EOL) {
 							System.out.println();	
 						}

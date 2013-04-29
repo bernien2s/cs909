@@ -70,7 +70,7 @@ public class TFIDF implements CustomModel {
 				System.out.println("(STWFilter): Appled StringToWordVector");
 				
 				//Build classifier on filtered data
-				this.fc.buildClassifier(removedData);
+				//this.fc.buildClassifier(removedData);
 			
 				//Present results and store averages
 				System.out.println("(TFIDFModel): Running evaluation of " + cName + " on TFIDF Model");

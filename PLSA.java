@@ -7,6 +7,7 @@ import weka.core.converters.TextDirectoryLoader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.classifiers.Classifier;
+import java.util.Random;
 
 public class PLSA implements CustomModel {
 	
@@ -21,13 +22,22 @@ public class PLSA implements CustomModel {
 	
 	public void runFilteredClassifier(Instances data, Classifier classifier, String cName) {
 	
+		//data is what is given to the lsa evaluator.
 		
+		//Apply LSA evaluator options
+		String[] lsaoptions = {"-A", "-1","-R","0"};
+		
+		//Cross validation fold and random seed
+		int folds = 5;
+		Random rand = new Random(1);
+		
+		//remember to run the lsa transformedData method to retrieve the transformed instances.
 	
 	}
 	
 	public void performLSA(List<ReutersDocument> collection) {
 
-		String[] lsaoptions = {"-A", "-1","-R","0"};
+		/*String[] lsaoptions = {"-A", "-1","-R","0"};
 		
 		try 
         {
@@ -39,7 +49,7 @@ public class PLSA implements CustomModel {
         catch(Exception e)
         {
             System.out.println(e);
-        }
+        }*/
 	}
 	
 	//deprecated but interface still contains it so safer to leave for now

@@ -23,7 +23,7 @@ public class TFIDF implements CustomModel {
 	private double averagedIncorrect;
 	private double averagedCorrectPct;
 	private double averagedCorrect;
-	private double averagedKappa;
+	private double averagedRMSE;
 	
 	private double noOfInstances;
 	private int noOfClasses;
@@ -40,7 +40,7 @@ public class TFIDF implements CustomModel {
 	public void runFilteredClassifier(Instances data, Classifier classifier, String cName) {
 
 		//Apply StringToWordVector TFIDF Option
-		String swvoptions[] = {"-W 100", "-I", "-L", "-M 1"};
+		String swvoptions[] = {"-W 2000", "-I", "-L", "-M 1"};
 		
 		//Cross validation fold and random seed
 		int folds = 5;
@@ -81,11 +81,11 @@ public class TFIDF implements CustomModel {
 				averagedCorrectPct = averagedCorrectPct + eval.pctCorrect();
 				averagedIncorrect = averagedIncorrect + (eval.incorrect());
 				averagedIncorrectPct = averagedIncorrectPct + eval.pctIncorrect();
-				averagedKappa = averagedKappa + eval.kappa();
+				averagedRMSE = averagedRMSE + eval.rootMeanSquaredError();
 				
 				System.out.println("Correctly Classified: " + (eval.correct()) + " (" + eval.pctCorrect() + "%)");
 				System.out.println("Incorrectly Classified: " + (eval.incorrect()) + " (" + eval.pctIncorrect() + "%)");
-				System.out.println("Kappa Statistic: " + eval.kappa());
+				System.out.println("RMSE: " + eval.rootMeanSquaredError());
 				
 				System.out.println();
 			}
@@ -97,7 +97,7 @@ public class TFIDF implements CustomModel {
 		}
 		
 		//Average statistics
-		averagedKappa = averagedKappa / this.noOfClasses;
+		averagedRMSE = averagedRMSE/ this.noOfClasses;
 		averagedCorrect = averagedCorrect / this.noOfClasses;
 		averagedCorrectPct = averagedCorrectPct / this.noOfClasses;
 		averagedIncorrect = averagedIncorrect/ this.noOfClasses;
@@ -106,14 +106,12 @@ public class TFIDF implements CustomModel {
 		//Print out terminal results
 		System.out.println("(TFIDFModel): Final results with " + classifier + ". Average per all possible class attributes:");
 		System.out.println("Correctly Classified: " + averagedCorrect +" (" + averagedCorrectPct + "%)");
-		System.out.println("Incorrectly Classified: " + " (" + averagedIncorrectPct + "%)");
-		System.out.println("Kappa Statistic: " + averagedKappa);
+		System.out.println("Incorrectly Classified: " + averagedIncorrect + " (" + averagedIncorrectPct + "%)");
+		System.out.println("RMSE: " + averagedRMSE);
 		
 	
 		
 	}
-	
-	
 	
 	
 	/*

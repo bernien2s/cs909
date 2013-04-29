@@ -27,6 +27,7 @@ import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.classifiers.Classifier;
+import weka.classifiers.functions.LibSVM;
 
 public class Parser {
 
@@ -72,6 +73,7 @@ public class Parser {
 			System.out.println("b. J48");
 			System.out.println("c. IBk");
 			System.out.println("d. RandomForest");
+			System.out.println("e. SVM");
 			System.out.println("-f force regeneration");
 			System.exit(-1);
 		} else {
@@ -102,8 +104,8 @@ public class Parser {
 				classifier = new weka.classifiers.trees.RandomForest();
 				classifierName = "RandomForest";
 			} else if (args[1].equals("e")) {
-				classifier = new weka.classifiers.rules.ConjunctiveRule();
-				classifierName = "ConjunctiveRule";
+				//classifier = weka.classifiers.functions.LibSVM();
+				classifierName = "SVM";
 			} else {
 				classifier = new weka.classifiers.rules.ZeroR();
 				classifierName = "ZeroR";

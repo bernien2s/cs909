@@ -8,6 +8,7 @@ import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.Evaluation;
+import weka.classifiers.Classifier;
 
 /*TFIDF Model with Multiple Classifier Implementations
   - Uses FilteredClassifier
@@ -18,8 +19,12 @@ public class TFIDF implements CustomModel {
 	private StringToWordVector swv; 
 	private Remove rm;
 	private FilteredClassifier fc;
+	private double averagedIncorrectPct;
 	private double averagedIncorrect;
+	private double averagedCorrectPct;
 	private double averagedCorrect;
+	private double averagedKappa;
+	
 	private double noOfInstances;
 	private int noOfClasses;
 	
@@ -32,46 +37,57 @@ public class TFIDF implements CustomModel {
 		
 	}
 	
-	public void runFilteredClassifier(Instances data, String classifier) {
+	public void runFilteredClassifier(Instances data, Classifier classifier, String cName) {
 
 		//Apply StringToWordVector TFIDF Option
 		String swvoptions[] = {"-W 100", "-I", "-L", "-M 1"};
 		
-		//Apply classifier to the filtered classifier
-		String classifierOpts[] = {"-W " + classifier};
-		
 		//Cross validation fold and random seed
-		int folds = 10;
+		int folds = 5;
 		Random rand = new Random(1);
 		
 		try {
 			
 			for (int i = 1; i < this.noOfClasses; i++) {
-			
+		
+				System.out.println("(RemoveFilter): Selected class attribute " + i);
+		
 				//Set input format and options for sw and filteredclassifier
 				this.swv.setInputFormat(data);
 				this.swv.setOptions(swvoptions);
-				this.fc.setOptions(classifierOpts);
+				this.fc.setClassifier(classifier);
 				
 				//Remove all attribute classes
 				this.rm.setAttributeIndicesArray(new int[] {0,i});
 				this.rm.setInvertSelection(true);
 				this.rm.setInputFormat(data);
-				
-				//Apply options to remove filter and apply
 				Instances removedData = Filter.useFilter(data, this.rm);
-				System.out.println("(RemoveFilter): Left class attribute " + i);
 				
-				//Apply string to word vector filter and builds classifier
+				//Apply StringToWordVector filter
 				removedData.setClassIndex(1);
 				this.fc.setFilter(this.swv);
+				System.out.println("(STWFilter): Appled StringToWordVector");
 				
+				//Build classifier on filtered data
 				//this.fc.buildClassifier(removedData);
-				
+			
+				//Present results and store averages
+				System.out.println("(TFIDFModel): Running evaluation of " + cName + " on TFIDF Model");
 				Evaluation eval = new Evaluation(removedData);
-				eval.crossValidateModel(fc, removedData, folds, rand);
-				System.out.println(eval.toSummaryString());
+				//eval.evaluateModel(this.fc, removedData);
+				eval.crossValidateModel(this.fc, removedData, folds, rand);
 				
+				averagedCorrect = averagedCorrect + (eval.correct());
+				averagedCorrectPct = averagedCorrectPct + eval.pctCorrect();
+				averagedIncorrect = averagedIncorrect + (eval.incorrect());
+				averagedIncorrectPct = averagedIncorrect + eval.pctIncorrect();
+				averagedKappa = averagedKappa + eval.kappa();
+				
+				System.out.println("Correctly Classified: " + (eval.correct()) + " (" + eval.pctCorrect() + "%)");
+				System.out.println("Incorrectly Classified: " + (eval.incorrect()) + " (" + eval.pctIncorrect() + "%)");
+				System.out.println("Kappa Statistic: " + eval.kappa());
+				
+				System.out.println();
 			}
 			
 		} catch (Exception err) {
@@ -79,8 +95,21 @@ public class TFIDF implements CustomModel {
 			err.printStackTrace(System.out);
 		
 		}
+		
+		//Average statistics
+		averagedKappa = averagedKappa / noOfClasses;
+		averagedCorrect = averagedCorrect / noOfClasses;
+		averagedCorrectPct = averagedCorrectPct / noOfClasses;
+		averagedIncorrect = averagedIncorrect/ noOfClasses;
+		averagedIncorrectPct = averagedIncorrectPct / noOfClasses;
+		
+		//Print out terminal results
+		System.out.println("(TFIDFModel): Final results with " + classifier + ". Average per all possible class attributes:");
+		System.out.println("Correctly Classified: " + averagedCorrect + " (" + averagedCorrectPct + "%)");
+		System.out.println("Incorrectly Classified: " + averagedIncorrect + " (" + averagedIncorrectPct + "%)");
+		System.out.println("Kappa Statistic: " + averagedKappa);
 	
-	
+		
 	}
 	
 	

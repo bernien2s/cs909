@@ -1,8 +1,9 @@
 import weka.core.Instances;
+import weka.classifiers.Classifier;
 
 interface CustomModel {
 	
 	Instances[] runModel(Instances data, Instances data2); 
-	void runFilteredClassifier(Instances data, String classifier);
+	void runFilteredClassifier(Instances data, Classifier classifier, String cName);
 
 }

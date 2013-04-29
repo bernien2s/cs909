@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils.DataSource;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+import weka.classifiers.Classifier;
 
 public class Parser {
 
@@ -39,6 +40,8 @@ public class Parser {
 	
 	private static String dirpath;
 	private static String directory;
+	private static Classifier classifier;
+	private static String classifierName;
 	private static int sgmCount;
 	private static List<ReutersDocument> completedCollection;
 	
@@ -60,11 +63,15 @@ public class Parser {
 		if (args.length == 0) {
 			//some default action
 			System.out.println("Usage:");
-			System.out.println("Windows: java -Xmx256m -cp .;weka.jar Parser {1-3} [-f]");
-			System.out.println("*Nix   : java -Xmx256m -cp .:weka.jar Parser {1-3} [-f]");
+			System.out.println("Windows: java -Xmx256m -cp .;weka.jar Parser {1-3} {a-d} [-f]");
+			System.out.println("*Nix   : java -Xmx256m -cp .:weka.jar Parser {1-3} {a-d} [-f]");
 			System.out.println("1. MDM");
 			System.out.println("2. PLSA");
 			System.out.println("3. TF-IDF");
+			System.out.println("a. NaiveBayes");
+			System.out.println("b. J48");
+			System.out.println("c. IBk");
+			System.out.println("d. RandomForest");
 			System.out.println("-f force regeneration");
 			System.exit(-1);
 		} else {
@@ -82,9 +89,29 @@ public class Parser {
 					break;
 			}
 		
+			if(args[1].equals("a")) {
+				classifier = new weka.classifiers.bayes.NaiveBayes();
+				classifierName = "NaiveBayes";
+			} else if(args[1].equals("b")) {
+				classifier = new weka.classifiers.trees.J48();
+				classifierName = "J48";
+			} else if(args[1].equals("c")) {
+				classifier = new weka.classifiers.lazy.IBk();
+				classifierName = "IBk";
+			} else if(args[1].equals("d")) {
+				classifier = new weka.classifiers.trees.RandomForest();
+				classifierName = "RandomForest";
+			} else if (args[1].equals("e")) {
+				classifier = new weka.classifiers.rules.ConjunctiveRule();
+				classifierName = "ConjunctiveRule";
+			} else {
+				classifier = new weka.classifiers.rules.ZeroR();
+				classifierName = "ZeroR";
+			}
+			
 		}	
-		if (args.length > 1) {	
-			if (args[1].equals("-f")) {	
+		if (args.length > 2) {	
+			if (args[2].equals("-f")) {	
 				File lm = new File("lastModified.dat");
 				try{
 					lm.delete();
@@ -141,13 +168,9 @@ public class Parser {
 			System.exit(-1);
 		}
 		
-		//perform data model (my view is that the preprocessor will be in its own class w/ instantiation in the model)
-		
-		//Instances[] is = model.runModel(trainingData, testData);
-		
-		model.runFilteredClassifier(trainingData, "NaiveBayes");
-		
-		//ClassificationSuite.runNaiveBayes(is[0], is[1]);		
+		//run the filtered classifier depending on the instantiated model
+		System.out.println("(Parser): Running training data with classifier " + classifierName);
+		model.runFilteredClassifier(trainingData, classifier, classifierName);	
 
 
 	}

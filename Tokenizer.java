@@ -251,8 +251,6 @@ public class Tokenizer {
 			//read and store topics list
 			while((tmpLine = reader.readLine())!=null) {
 				
-				System.out.println(tmpLine);
-				
 				if (topicString=="") {
 					topicString = null;
 				} else {

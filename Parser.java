@@ -86,6 +86,9 @@ public class Parser {
 				case 3:
 					model = new TFIDF();
 					break; 
+				case 4: 
+					model = new MBDM();
+					break; 
 				default: 
 					//model = new SWM();
 					break;

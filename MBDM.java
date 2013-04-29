@@ -6,6 +6,8 @@ import weka.core.converters.TextDirectoryLoader;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.Remove;
 import weka.filters.unsupervised.attribute.StringToWordVector;
+import weka.filters.MultiFilter; 
+import weka.filters.unsupervised.attribute.NumericToBinary;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.Evaluation;
 import weka.classifiers.Classifier;
@@ -19,6 +21,8 @@ public class MBDM implements CustomModel {
 	private StringToWordVector swv; 
 	private Remove rm;
 	private FilteredClassifier fc;
+	private MultiFilter mf;
+	private NumericToBinary nb; 	
 	private double averagedIncorrectPct;
 	private double averagedIncorrect;
 	private double averagedCorrectPct;
@@ -33,6 +37,10 @@ public class MBDM implements CustomModel {
 		this.swv = new StringToWordVector(); 
 		this.rm = new Remove();
 		this.fc = new FilteredClassifier();
+		
+		this.mf = new MultiFilter(); 
+		this.nb = new NumericToBinary(); 
+		
 		this.noOfClasses = 75;
 		
 	}
@@ -57,6 +65,13 @@ public class MBDM implements CustomModel {
 				this.swv.setOptions(swvoptions);
 				this.fc.setClassifier(classifier);
 				
+				//set all options for the NumericToBinary filter
+				this.nb.setInputFormat(data);
+				
+				//set all of the options for the MultiFilter
+				Filter[] filters = {this.swv, this.nb};
+				this.mf.setFilters(filters);
+				
 				//Remove all attribute classes
 				this.rm.setAttributeIndicesArray(new int[] {0,i});
 				this.rm.setInvertSelection(true);
@@ -65,14 +80,14 @@ public class MBDM implements CustomModel {
 				
 				//Apply StringToWordVector filter
 				removedData.setClassIndex(1);
-				this.fc.setFilter(this.swv);
-				System.out.println("(STWFilter): Appled StringToWordVector");
+				this.fc.setFilter(this.mf);
+				System.out.println("(MFilter): Appled MultiFilter - 1) StringToWord 2) NumericToBinary");
 				
 				//Build classifier on filtered data
 				//this.fc.buildClassifier(removedData);
 			
 				//Present results and store averages
-				System.out.println("(MDMModel): Running evaluation of " + cName + " on MDM Model");
+				System.out.println("(MBDMModel): Running evaluation of " + cName + " on MBDM Model");
 				Evaluation eval = new Evaluation(removedData);
 				//eval.evaluateModel(this.fc, removedData);
 				eval.crossValidateModel(this.fc, removedData, folds, rand);

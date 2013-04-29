@@ -82,6 +82,7 @@ public class Parser {
 					model = new MDM(); 
 					break; 
 				case 2: 
+					model = new PLSA();
 					break; 
 				case 3:
 					model = new TFIDF();
@@ -107,7 +108,7 @@ public class Parser {
 				classifier = new weka.classifiers.trees.RandomForest();
 				classifierName = "RandomForest";
 			} else if (args[1].equals("e")) {
-				//classifier = weka.classifiers.functions.LibSVM();
+				classifier = new LibSVM();
 				classifierName = "SVM";
 			} else {
 				classifier = new weka.classifiers.rules.ZeroR();

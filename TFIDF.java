@@ -9,6 +9,7 @@ import weka.filters.unsupervised.attribute.StringToWordVector;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.Evaluation;
 import weka.classifiers.Classifier;
+import weka.classifiers.functions.LibSVM;
 
 /*TFIDF Model with Multiple Classifier Implementations
   - Uses FilteredClassifier
@@ -109,9 +110,9 @@ public class TFIDF implements CustomModel {
 		System.out.println("Incorrectly Classified: " + averagedIncorrect + " (" + averagedIncorrectPct + "%)");
 		System.out.println("RMSE: " + averagedRMSE);
 		
-	
-		
 	}
+	
+	
 	
 	
 	/*

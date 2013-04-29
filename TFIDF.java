@@ -97,16 +97,16 @@ public class TFIDF implements CustomModel {
 		}
 		
 		//Average statistics
-		averagedKappa = averagedKappa / noOfClasses;
-		averagedCorrect = averagedCorrect / noOfClasses;
-		averagedCorrectPct = averagedCorrectPct / noOfClasses;
-		averagedIncorrect = averagedIncorrect/ noOfClasses;
-		averagedIncorrectPct = averagedIncorrectPct / noOfClasses;
+		averagedKappa = averagedKappa / this.noOfClasses;
+		averagedCorrect = averagedCorrect / this.noOfClasses;
+		averagedCorrectPct = averagedCorrectPct / this.noOfClasses;
+		averagedIncorrect = averagedIncorrect/ this.noOfClasses;
+		averagedIncorrectPct = averagedIncorrectPct / this.noOfClasses;
 		
 		//Print out terminal results
 		System.out.println("(TFIDFModel): Final results with " + classifier + ". Average per all possible class attributes:");
-		System.out.println("Correctly Classified: " + averagedCorrect + " (" + averagedCorrectPct + "%)");
-		System.out.println("Incorrectly Classified: " + averagedIncorrect + " (" + averagedIncorrectPct + "%)");
+		System.out.println("Correctly Classified: " + averagedCorrect +" (" + averagedCorrectPct + "%)");
+		System.out.println("Incorrectly Classified: " + " (" + averagedIncorrectPct + "%)");
 		System.out.println("Kappa Statistic: " + averagedKappa);
 	
 		

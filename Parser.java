@@ -135,10 +135,6 @@ public class Parser {
 		if(filesChanged(files)) {
 			//stick all of the files into the sgm parser
 			loadSGMFiles(files);
-			
-			//pass to lemmatizer? (more accurate classification)
-			//better than stemming but more lookup involved (http://en.wikipedia.org/wiki/Lemmatisation)
-			//uses lucene.
 				
 			//pass to tokenizer for now
 			Tokenizer tk = new Tokenizer(completedCollection);

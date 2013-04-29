@@ -80,7 +80,7 @@ public class TFIDF implements CustomModel {
 				averagedCorrect = averagedCorrect + (eval.correct());
 				averagedCorrectPct = averagedCorrectPct + eval.pctCorrect();
 				averagedIncorrect = averagedIncorrect + (eval.incorrect());
-				averagedIncorrectPct = averagedIncorrect + eval.pctIncorrect();
+				averagedIncorrectPct = averagedIncorrectPct + eval.pctIncorrect();
 				averagedKappa = averagedKappa + eval.kappa();
 				
 				System.out.println("Correctly Classified: " + (eval.correct()) + " (" + eval.pctCorrect() + "%)");
@@ -108,6 +108,7 @@ public class TFIDF implements CustomModel {
 		System.out.println("Correctly Classified: " + averagedCorrect +" (" + averagedCorrectPct + "%)");
 		System.out.println("Incorrectly Classified: " + " (" + averagedIncorrectPct + "%)");
 		System.out.println("Kappa Statistic: " + averagedKappa);
+		
 	
 		
 	}

@@ -18,7 +18,7 @@ import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.Evaluation;
 import weka.classifiers.Classifier;
 
-/*TFIDF Model with Multiple Classifier Implementations
+/*MBDM Model with Multiple Classifier Implementations
   - Uses FilteredClassifier
 */
 

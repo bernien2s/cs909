@@ -29,6 +29,7 @@ public class MBDM implements CustomModel {
 	private FilteredClassifier fc;
 	private MultiFilter mf;
 	private NumericToBinary nb; 
+	
 	private AttributeSelection as; 
 	private Reorder ro; 
 	private Reorder rro;
@@ -50,15 +51,14 @@ public class MBDM implements CustomModel {
 		this.swv = new StringToWordVector(); 
 		this.rm = new Remove();
 		this.fc = new FilteredClassifier();
+		this.nb = new NumericToBinary(); 
+		
 		this.as = new AttributeSelection(); 
 		this.ro = new Reorder(); 
 		this.rro = new Reorder(); 
-		
 		this.igae = new InfoGainAttributeEval();
 		this.rkr = new Ranker(); 
-		
 		this.mf = new MultiFilter(); 
-		this.nb = new NumericToBinary(); 
 		
 		this.noOfClasses = 75;
 		

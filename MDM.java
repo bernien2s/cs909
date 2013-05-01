@@ -60,7 +60,7 @@ public class MDM implements CustomModel {
 		
 	}
 	
-	public void runFilteredClassifier(Instances data, Classifier classifier, String cName) {
+	public void runFilteredClassifier(Instances data, Instances test, Classifier classifier, String cName) {
 
 		//Apply StringToWordVector TFIDF Option
 		String swvoptions[] = {"-W 2000"};
@@ -100,6 +100,8 @@ public class MDM implements CustomModel {
 		
 				System.out.println("(RemoveFilter): Selected class attribute " + i);
 		
+				//TRAINING RUN
+		
 				//Set input format and options for sw and filteredclassifier
 				this.swv.setInputFormat(data);
 				this.swv.setOptions(swvoptions);
@@ -138,13 +140,58 @@ public class MDM implements CustomModel {
 				System.out.println("(STWFilter): Appled StringToWordVector");
 				
 				//Build classifier on filtered data
-				//this.fc.buildClassifier(removedData);
+				this.fc.buildClassifier(removedData);
+				
+				//FILTER TEST RUN
+				//Set input format and options for sw and filteredclassifier
+				this.swv = new StringToWordVector(); 
+				this.rm = new Remove();
+				this.as = new AttributeSelection(); 
+				this.ro = new Reorder(); 
+				this.rro = new Reorder(); 
+				this.igae = new InfoGainAttributeEval();
+				this.rkr = new Ranker(); 
+				this.mf = new MultiFilter(); 
+				
+				this.swv.setInputFormat(test);
+				this.swv.setOptions(swvoptions);
+				
+				//set input format for Reorder 
+				this.ro.setInputFormat(test);
+				this.ro.setOptions(roOptions);
+				
+				//set input format for Reorder
+				this.rro.setInputFormat(test);
+				this.rro.setOptions(rroOptions);
+				
+				//seet input format for Ranker
+				this.rkr.setOptions(rkrOptions);
+				
+				//set input format for AttributeSelection
+				//this.as.setInputFormat(test);
+				//this.as.setOptions(asOptions);
+				this.as.setEvaluator(igae);
+				this.as.setSearch(rkr); 
+				
+				//Remove all attribute classes
+				this.rm.setAttributeIndicesArray(new int[] {0,i});
+				this.rm.setInvertSelection(true);
+				this.rm.setInputFormat(test);
+				Instances testData = Filter.useFilter(test, this.rm);
+				
+				//set all of the options for the MultiFilter
+				Filter[] filters2 = {this.swv, this.ro, this.as, this.rro};
+				this.mf.setFilters(filters2);
+				
+				//Apply StringToWordVector filter
+				testData.setClassIndex(1);
+				System.out.println("(STWFilter): Appled StringToWordVector");
 			
 				//Present results and store averages
 				System.out.println("(MDMModel): Running evaluation of " + cName + " on MDM Model");
 				Evaluation eval = new Evaluation(removedData);
-				//eval.evaluateModel(this.fc, removedData);
-				eval.crossValidateModel(this.fc, removedData, folds, rand);
+				eval.evaluateModel(this.fc, testData);
+				//eval.crossValidateModel(this.fc, removedData, folds, rand);
 				
 				averagedCorrect = averagedCorrect + (eval.correct());
 				averagedCorrectPct = averagedCorrectPct + eval.pctCorrect();

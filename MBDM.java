@@ -64,7 +64,7 @@ public class MBDM implements CustomModel {
 		
 	}
 	
-	public void runFilteredClassifier(Instances data, Classifier classifier, String cName) {
+	public void runFilteredClassifier(Instances data, Instances test, Classifier classifier, String cName) {
 
 		//Apply StringToWordVector
 		String swvoptions[] = {"-W 2000"};

@@ -61,7 +61,7 @@ public class TFIDF implements CustomModel {
 		
 	}
 	
-	public void runFilteredClassifier(Instances data, Classifier classifier, String cName) {
+	public void runFilteredClassifier(Instances data, Instances test, Classifier classifier, String cName) {
 
 		//Apply StringToWordVector TFIDF Option
 		String swvoptions[] = {"-W 2000", "-I", "-L", "-M 1"};

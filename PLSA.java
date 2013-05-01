@@ -35,7 +35,7 @@ public class PLSA implements CustomModel {
 		
 	}
 	
-	public void runFilteredClassifier(Instances data, Classifier classifier, String cName) {
+	public void runFilteredClassifier(Instances data, Instances test, Classifier classifier, String cName) {
 	
 		//data is what is given to the lsa evaluator.
 		

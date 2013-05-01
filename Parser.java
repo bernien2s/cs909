@@ -172,7 +172,7 @@ public class Parser {
 		
 		//run the filtered classifier depending on the instantiated model
 		System.out.println("(Parser): Running training data with classifier " + classifierName);
-		model.runFilteredClassifier(trainingData, classifier, classifierName);	
+		model.runFilteredClassifier(trainingData, testData, classifier, classifierName);	
 
 
 	}
